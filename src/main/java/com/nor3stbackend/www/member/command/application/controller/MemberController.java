@@ -2,6 +2,7 @@ package com.nor3stbackend.www.member.command.application.controller;
 
 import com.nor3stbackend.www.config.SecurityUtil;
 import com.nor3stbackend.www.login.TokenInfo;
+import com.nor3stbackend.www.member.command.application.dto.EmployeeRegistrationDto;
 import com.nor3stbackend.www.member.command.application.dto.MemberLoginRequestDto;
 import com.nor3stbackend.www.member.command.application.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -34,5 +35,11 @@ public class MemberController {
     @PostMapping("/memberId")
     public String getMemberId() {
         return SecurityUtil.getCurrentMemberId();
+    }
+
+    @PostMapping("/employee")
+    public String registerEmployee(@RequestBody EmployeeRegistrationDto employeeRegistrationDto) {
+        memberService.registerEmployee(employeeRegistrationDto);
+        return "success";
     }
 }

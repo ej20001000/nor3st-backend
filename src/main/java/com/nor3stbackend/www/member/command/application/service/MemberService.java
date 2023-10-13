@@ -1,7 +1,11 @@
 package com.nor3stbackend.www.member.command.application.service;
 
+import com.nor3stbackend.www.company.command.application.service.CompanyService;
+import com.nor3stbackend.www.company.command.domain.aggregate.CompanyEntity;
 import com.nor3stbackend.www.config.JwtTokenProvider;
 import com.nor3stbackend.www.login.TokenInfo;
+import com.nor3stbackend.www.member.command.application.dto.EmployeeRegistrationDto;
+import com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity;
 import com.nor3stbackend.www.member.command.infra.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,11 +14,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberService {
+
     private final MemberRepository memberRepository;
+    private final CompanyService companyService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -32,5 +40,25 @@ public class MemberService {
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 
         return tokenInfo;
+    }
+
+    @Transactional
+    public void registerEmployee(EmployeeRegistrationDto employeeRegistrationDto) {
+
+        CompanyEntity companyEntity = checkIfEmpty(companyService.getCompany(employeeRegistrationDto.getCompanyName()), employeeRegistrationDto.getCompanyName());
+
+        MemberEntity memberEntity = MemberEntity.builder()
+                .username(employeeRegistrationDto.getUsername())
+                .password(employeeRegistrationDto.getPassword())
+                .companyEntity(companyEntity)
+                .employeeNo(employeeRegistrationDto.getEmployeeNo())
+                .build();
+    }
+
+    public CompanyEntity checkIfEmpty(Optional<CompanyEntity> companyEntity, String companyName) {
+        if(companyEntity.isEmpty()) {
+            return companyService.insertCompany(companyName);
+        }
+        return companyEntity.get();
     }
 }
