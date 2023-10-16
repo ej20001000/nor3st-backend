@@ -1,5 +1,6 @@
 package com.nor3stbackend.www.member.command.domain.aggregate;
 
+import com.nor3stbackend.www.company.command.domain.aggregate.CompanyEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,14 +20,28 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Member implements UserDetails {
+@Table(name = "member")
+public class MemberEntity implements UserDetails {
 
     @Id
-    @Column(updatable = false, unique = true, nullable = false)
-    private String memberId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long memberId;
+
+    @Column(unique = true, nullable = false)
+    private String username;
 
     @Column(nullable = false)
     private String password;
+
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private CompanyEntity companyEntity;
+
+    private String employeeNo;
+
+    private String companyPosition;
+
+    private String department;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
@@ -41,12 +56,32 @@ public class Member implements UserDetails {
 
     @Override
     public String getUsername() {
-        return memberId;
+        return username;
     }
 
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public CompanyEntity getCompanyEntity() {
+        return companyEntity;
+    }
+
+    public String getEmployeeNo() {
+        return employeeNo;
+    }
+
+    public String getCompanyPosition() {
+        return companyPosition;
+    }
+
+    public String getDepartment() {
+        return department;
     }
 
     @Override
