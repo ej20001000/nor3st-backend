@@ -73,4 +73,8 @@ public class MemberService {
         return memberRepository.save(memberEntity);
     }
 
+    public boolean checkUsername(String username) {
+
+        return memberRepository.findByUsername(username).isPresent();
+    }
 }
