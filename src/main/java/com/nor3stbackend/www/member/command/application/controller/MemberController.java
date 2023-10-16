@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -64,6 +61,23 @@ public class MemberController {
             responseMessage.setMessage("매니저 생성에 실패하였습니다.");
             responseMessage.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
             responseMessage.setData(e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
+    }
+
+    @GetMapping("/checkUsername")
+    public ResponseEntity<?> checkUsername(@RequestParam String username) {
+        ResponseMessage responseMessage = new ResponseMessage();
+
+        responseMessage.setStatus(HttpStatus.OK);
+
+        if(memberService.checkUsername(username)) {
+            responseMessage.setData(false);
+            responseMessage.setMessage("이미 존재하는 아이디입니다.");
+        } else {
+            responseMessage.setData(true);
+            responseMessage.setMessage("사용 가능한 아이디입니다.");
         }
 
         return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
