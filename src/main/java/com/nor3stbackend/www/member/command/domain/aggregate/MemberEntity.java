@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Getter
 @Builder
+@Table(name = "member")
 public class MemberEntity implements UserDetails {
 
     @Id
@@ -38,7 +39,7 @@ public class MemberEntity implements UserDetails {
 
     private String employeeNo;
 
-    private String rank;
+    private String companyPosition;
 
     private String department;
 
@@ -75,8 +76,8 @@ public class MemberEntity implements UserDetails {
         return employeeNo;
     }
 
-    public String getRank() {
-        return rank;
+    public String getCompanyPosition() {
+        return companyPosition;
     }
 
     public String getDepartment() {

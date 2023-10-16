@@ -1,10 +1,12 @@
 package com.nor3stbackend.www.member.command.application.service;
 
 import com.nor3stbackend.www.company.command.application.service.CompanyService;
-import com.nor3stbackend.www.company.command.domain.aggregate.CompanyEntity;
 import com.nor3stbackend.www.config.JwtTokenProvider;
+import com.nor3stbackend.www.login.Encryptor;
 import com.nor3stbackend.www.login.TokenInfo;
 import com.nor3stbackend.www.member.command.application.dto.EmployeeRegistrationDto;
+import com.nor3stbackend.www.member.command.application.dto.ManagerRegistrationDto;
+import com.nor3stbackend.www.member.command.domain.RoleEnum;
 import com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity;
 import com.nor3stbackend.www.member.command.infra.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.Collections;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,6 +27,7 @@ public class MemberService {
     private final CompanyService companyService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final Encryptor encryptor;
 
     @Transactional
     public TokenInfo login(String memberId, String password) {
@@ -43,22 +46,31 @@ public class MemberService {
     }
 
     @Transactional
-    public void registerEmployee(EmployeeRegistrationDto employeeRegistrationDto) {
+    public Long registerEmployee(EmployeeRegistrationDto employeeRegistrationDto) {
 
-        CompanyEntity companyEntity = checkIfEmpty(companyService.getCompany(employeeRegistrationDto.getCompanyName()), employeeRegistrationDto.getCompanyName());
 
         MemberEntity memberEntity = MemberEntity.builder()
                 .username(employeeRegistrationDto.getUsername())
-                .password(employeeRegistrationDto.getPassword())
-                .companyEntity(companyEntity)
+                .password(encryptor.encrypt(employeeRegistrationDto.getPassword()))
+                .companyEntity(companyService.getCompany(employeeRegistrationDto.getCompanyId()).get())
                 .employeeNo(employeeRegistrationDto.getEmployeeNo())
+                .companyPosition(employeeRegistrationDto.getCompanyPosition())
+                .department(employeeRegistrationDto.getDepartment())
+                .roles(Collections.singletonList(RoleEnum.EMPLOYEE.name()))
                 .build();
+
+        return memberRepository.save(memberEntity).getMemberId();
     }
 
-    public CompanyEntity checkIfEmpty(Optional<CompanyEntity> companyEntity, String companyName) {
-        if(companyEntity.isEmpty()) {
-            return companyService.insertCompany(companyName);
-        }
-        return companyEntity.get();
+    @Transactional
+    public MemberEntity registerManager(ManagerRegistrationDto managerRegistrationDto) {
+        MemberEntity memberEntity = MemberEntity.builder()
+                .username(managerRegistrationDto.getUsername())
+                .password(encryptor.encrypt(managerRegistrationDto.getPassword()))
+                .companyEntity(companyService.insertCompany(managerRegistrationDto.getCompanyName()))
+                .build();
+
+        return memberRepository.save(memberEntity);
     }
+
 }

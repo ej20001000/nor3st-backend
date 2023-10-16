@@ -19,7 +19,7 @@ public class CompanyService {
         return companyRepository.save(new CompanyEntity(companyName));
     }
 
-    public Optional<CompanyEntity> getCompany(String companyName) {
-        return companyRepository.findByCompanyName(companyName);
+    public Optional<CompanyEntity> getCompany(Long companyId) {
+        return companyRepository.findById(companyId);
     }
 }

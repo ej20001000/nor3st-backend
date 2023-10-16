@@ -4,12 +4,10 @@ import lombok.Data;
 
 @Data
 public class EmployeeRegistrationDto {
-    private Long memberId;
     private String password;
     private String username;
     private String employeeNo;
-    private String companyName;
-    private String role;
-    private String rank;
+    private Long companyId;
+    private String companyPosition;
     private String department;
 }
