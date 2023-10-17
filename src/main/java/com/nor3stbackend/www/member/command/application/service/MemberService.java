@@ -83,6 +83,7 @@ public class MemberService {
                 .username(managerRegistrationDto.getUsername())
                 .password(encryptor.encrypt(managerRegistrationDto.getPassword()))
                 .companyEntity(companyService.insertCompany(managerRegistrationDto.getCompanyName()))
+                .roles(Collections.singletonList(RoleEnum.MANAGER.name()))
                 .build();
 
         return memberRepository.save(memberEntity);
@@ -91,5 +92,9 @@ public class MemberService {
     public boolean checkUsername(String username) {
 
         return memberRepository.findByUsername(username).isEmpty();
+    }
+
+    public MemberEntity getMember(Long memberId) {
+        return memberRepository.findById(memberId).get();
     }
 }

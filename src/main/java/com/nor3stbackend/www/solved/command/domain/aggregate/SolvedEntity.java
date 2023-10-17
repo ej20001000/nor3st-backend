@@ -25,9 +25,9 @@ public class SolvedEntity {
     public SolvedEntity() {
     }
 
-    public SolvedEntity(MemberEntity memberEntity, String audioUrl, LocalDate solvedDate) {
+    public SolvedEntity(MemberEntity memberEntity, String audioUrl) {
         this.memberEntity = memberEntity;
         this.audioUrl = audioUrl;
-        this.solvedDate = solvedDate;
+        this.solvedDate = LocalDate.now();
     }
 }
