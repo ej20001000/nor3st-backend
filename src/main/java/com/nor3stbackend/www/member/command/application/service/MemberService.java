@@ -83,6 +83,8 @@ public class MemberService {
                 .username(managerRegistrationDto.getUsername())
                 .password(encryptor.encrypt(managerRegistrationDto.getPassword()))
                 .companyEntity(companyService.insertCompany(managerRegistrationDto.getCompanyName()))
+                .employeeName(managerRegistrationDto.getEmployeeName())
+                .department(managerRegistrationDto.getDepartment())
                 .roles(Collections.singletonList(RoleEnum.MANAGER.name()))
                 .build();
 

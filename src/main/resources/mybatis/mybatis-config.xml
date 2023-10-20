@@ -8,7 +8,4 @@
     <typeAliases>
         <typeAlias type="com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity" alias="MemberEntity"/>
     </typeAliases>
-    <mappers>
-        <mapper resource="mybatis/mapper/**"/>
-    </mappers>
 </configuration>

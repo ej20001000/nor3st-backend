@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/members/test").hasRole("USER")
-                .antMatchers("/members/**", "/solved").permitAll()
+                .antMatchers("/members/**", "/solved", "/members").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .cors()
