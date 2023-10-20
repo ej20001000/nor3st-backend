@@ -68,7 +68,7 @@ public class MemberService {
                 .username(employeeRegistrationDto.getUsername())
                 .password(encryptor.encrypt(employeeRegistrationDto.getPassword()))
                 .companyEntity(companyService.getCompany(employeeRegistrationDto.getCompanyId()).get())
-                .employeeNo(employeeRegistrationDto.getEmployeeNo())
+                .employeeName(employeeRegistrationDto.getEmployeeName())
                 .companyPosition(employeeRegistrationDto.getCompanyPosition())
                 .department(employeeRegistrationDto.getDepartment())
                 .roles(Collections.singletonList(RoleEnum.EMPLOYEE.name()))

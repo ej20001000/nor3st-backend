@@ -6,7 +6,7 @@ import lombok.Data;
 public class EmployeeRegistrationDto {
     private String password;
     private String username;
-    private String employeeNo;
+    private String employeeName;
     private Long companyId;
     private String companyPosition;
     private String department;
