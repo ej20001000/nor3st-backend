@@ -37,15 +37,11 @@ public class MemberEntity implements UserDetails {
     @JoinColumn(name = "company_id")
     private CompanyEntity companyEntity;
 
-    private String employeeNo;
+    private String employeeName;
 
     private String companyPosition;
 
     private String department;
-
-    public MemberEntity (Long memberId) {
-        this.memberId = memberId;
-    }
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
@@ -76,10 +72,9 @@ public class MemberEntity implements UserDetails {
         return companyEntity;
     }
 
-    public String getEmployeeNo() {
-        return employeeNo;
+    public String getEmployeeName() {
+        return employeeName;
     }
-
     public String getCompanyPosition() {
         return companyPosition;
     }
