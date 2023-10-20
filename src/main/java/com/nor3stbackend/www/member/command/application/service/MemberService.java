@@ -10,13 +10,16 @@ import com.nor3stbackend.www.member.command.domain.RoleEnum;
 import com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity;
 import com.nor3stbackend.www.member.command.infra.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,19 +33,31 @@ public class MemberService {
     private final Encryptor encryptor;
 
     @Transactional
-    public TokenInfo login(String memberId, String password) {
-        // 1. Login ID/PW를 기반으로 Authentication 객체 생성
-        // 이때 authentication은 인증 여부를 확인하는 authenticated 값이 false
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberId, password);
+    public TokenInfo login(String username, String password) {
 
-        // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
-        // authenticate 메서드가 실행될 때 CustomUserDetailsService에서 만든 loadUserByUsername 메서드가 실행
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Optional<MemberEntity> memberEntity = memberRepository.findByUsername(username);
 
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+        if (memberEntity.isEmpty()) {
+            throw new BadCredentialsException("존재하지 않는 회원입니다.");
+        }
 
-        return tokenInfo;
+        if(BCrypt.checkpw(password, memberEntity.get().getPassword())) {
+            // 1. Login ID/PW를 기반으로 Authentication 객체 생성
+            // 이때 authentication은 인증 여부를 확인하는 authenticated 값이 false
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, memberEntity.get().getPassword());
+
+            // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
+            // authenticate 메서드가 실행될 때 CustomUserDetailsService에서 만든 loadUserByUsername 메서드가 실행
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+
+            // 3. 인증 정보를 기반으로 JWT 토큰 생성
+            TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+
+            return tokenInfo;
+        }  else {
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+        }
     }
 
     @Transactional
@@ -68,6 +83,7 @@ public class MemberService {
                 .username(managerRegistrationDto.getUsername())
                 .password(encryptor.encrypt(managerRegistrationDto.getPassword()))
                 .companyEntity(companyService.insertCompany(managerRegistrationDto.getCompanyName()))
+                .roles(Collections.singletonList(RoleEnum.MANAGER.name()))
                 .build();
 
         return memberRepository.save(memberEntity);
@@ -75,6 +91,10 @@ public class MemberService {
 
     public boolean checkUsername(String username) {
 
-        return memberRepository.findByUsername(username).isPresent();
+        return memberRepository.findByUsername(username).isEmpty();
+    }
+
+    public MemberEntity getMember(Long memberId) {
+        return memberRepository.findById(memberId).get();
     }
 }

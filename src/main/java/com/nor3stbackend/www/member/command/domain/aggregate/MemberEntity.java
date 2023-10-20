@@ -43,6 +43,10 @@ public class MemberEntity implements UserDetails {
 
     private String department;
 
+    public MemberEntity (Long memberId) {
+        this.memberId = memberId;
+    }
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
@@ -56,7 +60,7 @@ public class MemberEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return memberId.toString();
     }
 
     @Override

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -21,26 +22,30 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/login")
-    public TokenInfo login(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
-        String memberId = memberLoginRequestDto.getMemberId();
-        String password = memberLoginRequestDto.getPassword();
-        TokenInfo tokenInfo = memberService.login(memberId, password);
-        return tokenInfo;
+    public ResponseEntity<?> login(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
+        ResponseMessage responseMessage;
+        try{
+            String username = memberLoginRequestDto.getUsername();
+            String password = memberLoginRequestDto.getPassword();
+            TokenInfo tokenInfo = memberService.login(username, password);
+            responseMessage = setResponseMessage("로그인에 성공하였습니다.", HttpStatus.OK, tokenInfo);
+        } catch (BadCredentialsException e) {
+            log.error(e.getMessage());
+            responseMessage = setResponseMessage("로그인에 실패하였습니다.", HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
     }
 
     @PostMapping("/employee")
     public ResponseEntity<?> registerEmployee(@RequestBody EmployeeRegistrationDto employeeRegistrationDto) {
-        ResponseMessage responseMessage = new ResponseMessage();
+        ResponseMessage responseMessage;
 
         try {
-            responseMessage.setData(memberService.registerEmployee(employeeRegistrationDto));
-            responseMessage.setMessage("사원이 정상적으로 생성되었습니다.");
-            responseMessage.setStatus(HttpStatus.OK);
+            responseMessage = setResponseMessage("사원이 정상적으로 생성되었습니다.", HttpStatus.OK, memberService.registerEmployee(employeeRegistrationDto));
         } catch (Exception e) {
             log.error(e.getMessage());
-            responseMessage.setMessage("사원 생성에 실패하였습니다.");
-            responseMessage.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-            responseMessage.setData(e.getMessage());
+            responseMessage = setResponseMessage("사원 생성에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
 
@@ -53,14 +58,10 @@ public class MemberController {
         ResponseMessage responseMessage = new ResponseMessage();
 
         try {
-            responseMessage.setData(memberService.registerManager(managerRegistrationDto));
-            responseMessage.setMessage("매니저가 정상적으로 생성되었습니다.");
-            responseMessage.setStatus(HttpStatus.OK);
+            responseMessage = setResponseMessage("매니저가 정상적으로 생성되었습니다.", HttpStatus.OK, memberService.registerManager(managerRegistrationDto));
         } catch (Exception e) {
             log.error(e.getMessage());
-            responseMessage.setMessage("매니저 생성에 실패하였습니다.");
-            responseMessage.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-            responseMessage.setData(e.getMessage());
+            responseMessage = setResponseMessage("매니저 생성에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
         return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
@@ -70,16 +71,20 @@ public class MemberController {
     public ResponseEntity<?> checkUsername(@RequestParam String username) {
         ResponseMessage responseMessage = new ResponseMessage();
 
-        responseMessage.setStatus(HttpStatus.OK);
-
         if(memberService.checkUsername(username)) {
-            responseMessage.setData(false);
-            responseMessage.setMessage("이미 존재하는 아이디입니다.");
+            responseMessage = setResponseMessage("사용 가능한 아이디입니다.", HttpStatus.OK, true);
         } else {
-            responseMessage.setData(true);
-            responseMessage.setMessage("사용 가능한 아이디입니다.");
+            responseMessage = setResponseMessage("이미 사용중인 아이디입니다.", HttpStatus.OK, false);
         }
 
         return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
+    }
+
+    private ResponseMessage setResponseMessage(String message, HttpStatus status, Object data) {
+        ResponseMessage responseMessage = new ResponseMessage();
+        responseMessage.setMessage(message);
+        responseMessage.setStatus(status);
+        responseMessage.setData(data);
+        return responseMessage;
     }
 }
