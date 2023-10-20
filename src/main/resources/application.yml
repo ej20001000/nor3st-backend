@@ -28,3 +28,6 @@ logging:
 
 upload:
   path: C:\Dev\nor3st-backend\src\main\resources\static\upload\
+
+ai:
+  url: http://221.163.19.218:5541
