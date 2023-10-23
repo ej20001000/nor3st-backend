@@ -72,7 +72,7 @@ public class SolvedService {
             String response = requestToAI(headers, body);
 
             // DB 저장
-            MemberEntity memberEntity = memberService.getMember(Long.parseLong(SecurityUtil.getCurrentMemberId()));
+            MemberEntity memberEntity = memberService.getMember(SecurityUtil.getCurrentMemberId());
             SolvedEntity solvedEntity = new SolvedEntity(memberEntity, fullPath);
             SolvedHistoryEntity solvedHistoryEntity = new SolvedHistoryEntity(solvedRepository.save(solvedEntity), fullPath);
 

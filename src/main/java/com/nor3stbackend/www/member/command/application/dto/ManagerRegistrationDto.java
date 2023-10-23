@@ -7,4 +7,6 @@ public class ManagerRegistrationDto {
     private String password;
     private String username;
     private String companyName;
+    private String employeeName;
+    private String department;
 }
