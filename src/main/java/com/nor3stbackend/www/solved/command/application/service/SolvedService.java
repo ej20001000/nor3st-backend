@@ -30,7 +30,7 @@ import java.util.UUID;
 @Slf4j
 public class SolvedService {
 
-    @Value("${upload.path}")
+    @Value("${upload.solved.path}")
     private String uploadPath;
 
     @Value("${ai.url}")
