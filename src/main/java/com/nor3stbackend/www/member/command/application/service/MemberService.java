@@ -9,6 +9,7 @@ import com.nor3stbackend.www.member.command.application.dto.ManagerRegistrationD
 import com.nor3stbackend.www.member.command.domain.RoleEnum;
 import com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity;
 import com.nor3stbackend.www.member.command.infra.repository.MemberRepository;
+import com.nor3stbackend.www.solved.command.application.service.SolvedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +29,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final CompanyService companyService;
+    private final SolvedService solvedService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final Encryptor encryptor;
@@ -73,6 +75,8 @@ public class MemberService {
                 .department(employeeRegistrationDto.getDepartment())
                 .roles(Collections.singletonList(RoleEnum.EMPLOYEE.name()))
                 .build();
+
+        solvedService.createDailyTask(memberEntity);
 
         return memberRepository.save(memberEntity).getMemberId();
     }

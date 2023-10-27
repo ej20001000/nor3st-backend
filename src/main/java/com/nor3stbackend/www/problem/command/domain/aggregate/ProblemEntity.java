@@ -22,7 +22,7 @@ public class ProblemEntity {
 
     public ProblemEntity() {
     }
-    public ProblemEntity(String koreanContent, String vietContents) {
+    public ProblemEntity(String koreanContent, String vietContent) {
         this.koreanContent = koreanContent;
         this.vietContent = vietContent;
     }

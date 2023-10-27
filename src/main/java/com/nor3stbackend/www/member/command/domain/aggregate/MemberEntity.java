@@ -44,6 +44,10 @@ public class MemberEntity implements UserDetails {
     @Builder.Default
     private List<String> roles = new ArrayList<>();
 
+    public MemberEntity(Long memberId) {
+        this.memberId = memberId;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
