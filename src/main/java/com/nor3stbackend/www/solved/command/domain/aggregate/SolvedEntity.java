@@ -26,6 +26,8 @@ public class SolvedEntity {
 
     private String audioUrl;
 
+    private Integer solvedScore;
+
     private LocalDate solvedDate;
 
     private SolvedEnum isSolved;
@@ -37,6 +39,8 @@ public class SolvedEntity {
     public SolvedEntity(MemberEntity memberEntity, ProblemEntity problemEntity) {
         this.memberEntity = memberEntity;
         this.problemEntity = problemEntity;
+        this.solvedDate = LocalDate.now();
+        this.solvedScore = 0;
         this.isSolved = SolvedEnum.UNSOLVED;
     }
 
@@ -45,5 +49,10 @@ public class SolvedEntity {
         this.audioUrl = audioUrl;
         this.solvedDate = LocalDate.now();
         this.isSolved = SolvedEnum.UNSOLVED;
+    }
+
+    public void updateSolved(String audioUrl, SolvedEnum isSolved) {
+        this.audioUrl = audioUrl;
+        this.isSolved = isSolved;
     }
 }

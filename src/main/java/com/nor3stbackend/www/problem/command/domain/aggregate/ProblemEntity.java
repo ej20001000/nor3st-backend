@@ -18,12 +18,15 @@ public class ProblemEntity {
 
     private String vietContent;
 
+    private String audioUrl;
+
 
 
     public ProblemEntity() {
     }
-    public ProblemEntity(String koreanContent, String vietContent) {
+    public ProblemEntity(String koreanContent, String vietContent, String audioUrl) {
         this.koreanContent = koreanContent;
         this.vietContent = vietContent;
+        this.audioUrl = audioUrl;
     }
 }

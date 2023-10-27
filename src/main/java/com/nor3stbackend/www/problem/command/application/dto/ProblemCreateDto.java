@@ -6,8 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class ProblemCreateDto {
-    private MultipartFile maleAudioFile;
-    private MultipartFile femaleAudioFile;
+    private MultipartFile audioFile;
     private String koreanContent;
     private String vietContent;
 }
