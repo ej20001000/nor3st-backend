@@ -34,10 +34,6 @@ public class MemberEntity implements UserDetails {
     @JoinColumn(name = "company_id")
     private CompanyEntity companyEntity;
 
-    private String employeeName;
-
-    private String companyPosition;
-
     private String department;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -55,8 +51,9 @@ public class MemberEntity implements UserDetails {
                 .collect(Collectors.toList());
     }
 
-    public MemberEntity(String employeeName, String department) {
-        this.employeeName = employeeName;
+    public void updateEmployee(String username, String password, String department) {
+        this.username = username;
+        this.password = password;
         this.department = department;
     }
 
@@ -78,12 +75,6 @@ public class MemberEntity implements UserDetails {
         return companyEntity;
     }
 
-    public String getEmployeeName() {
-        return employeeName;
-    }
-    public String getCompanyPosition() {
-        return companyPosition;
-    }
 
     public String getDepartment() {
         return department;

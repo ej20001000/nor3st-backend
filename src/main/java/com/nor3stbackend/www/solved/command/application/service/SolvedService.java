@@ -1,12 +1,10 @@
 package com.nor3stbackend.www.solved.command.application.service;
 
 import com.nor3stbackend.www.common.ResponseMessage;
-import com.nor3stbackend.www.config.SecurityUtil;
-import com.nor3stbackend.www.member.command.application.service.MemberService;
 import com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity;
 import com.nor3stbackend.www.problem.command.domain.aggregate.ProblemEntity;
 import com.nor3stbackend.www.problem.query.application.service.ProblemQueryService;
-import com.nor3stbackend.www.solved.command.application.dto.SubmitSolvedDto;
+import com.nor3stbackend.www.solved.command.application.dto.GetScoreDto;
 import com.nor3stbackend.www.solved.command.domain.aggregate.SolvedEntity;
 import com.nor3stbackend.www.solved.command.domain.aggregate.SolvedHistoryEntity;
 import com.nor3stbackend.www.solved.command.domain.enumType.SolvedEnum;
@@ -14,9 +12,9 @@ import com.nor3stbackend.www.solved.command.infra.repository.SolvedHistoryReposi
 import com.nor3stbackend.www.solved.command.infra.repository.SolvedRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -26,8 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -57,6 +55,8 @@ public class SolvedService {
 
         ResponseMessage responseMessage;
 
+        SolvedEntity solvedEntity = solvedRepository.getReferenceById(solvedId);
+
         try {
 
             // 파일 저장 경로 설정
@@ -69,20 +69,33 @@ public class SolvedService {
             File dest = new File(fullPath);
             file.transferTo(dest);
 
+            FileSystemResource resource = new FileSystemResource(dest);
+
             // AI 서버로 요청
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.add("Content-Type", "multipart/form-data");
-//
-//            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-//            body.add("voice", dest);
-//
-//            String response = requestToAI(headers, body);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "multipart/form-data");
+
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("voice", resource);
+            body.add("script", solvedEntity.getProblemEntity().getKoreanContent());
+
+            GetScoreDto getScoreDto = requestToAI(headers, body);
 
             // DB 저장
-            SolvedEntity solvedEntity = solvedRepository.getReferenceById(solvedId);
 
-            solvedEntity.updateSolved(uniquePath, SolvedEnum.SOLVED);
-            SolvedHistoryEntity solvedHistoryEntity = new SolvedHistoryEntity(solvedRepository.save(solvedEntity), uniquePath, solvedEntity.getIsSolved());
+            SolvedEnum solvedEnum;
+
+            int score = getScoreDto.getScore();
+            System.out.println(getScoreDto.getAnswer());
+
+            if (score >= 80) {
+                solvedEnum = SolvedEnum.SOLVED;
+            } else {
+                solvedEnum = SolvedEnum.WRONG;
+            }
+
+            solvedEntity.updateSolved(uniquePath, solvedEnum, score);
+            SolvedHistoryEntity solvedHistoryEntity = new SolvedHistoryEntity(solvedRepository.save(solvedEntity), uniquePath, solvedEnum);
 
             solvedHistoryRepository.save(solvedHistoryEntity);
 
@@ -95,12 +108,12 @@ public class SolvedService {
         return responseMessage;
     }
 
-    public String requestToAI(HttpHeaders headers, MultiValueMap<String, Object> body) {
+    public GetScoreDto requestToAI(HttpHeaders headers, MultiValueMap<String, Object> body) {
         RestTemplate restTemplate = new RestTemplate();
 
 
         HttpEntity<?> request = new HttpEntity<>(body, headers);
-        HttpEntity<String> response = restTemplate.getForEntity(aiUrl + "/get_answer", String.class, request);
+        ResponseEntity<GetScoreDto> response = restTemplate.postForEntity(aiUrl + "/get_score", request, GetScoreDto.class);
 
         return response.getBody();
     }

@@ -18,7 +18,7 @@ public class MemberQueryService {
 
         MemberEntity memberEntity = memberMapper.findByMemberId(memberId);
 
-        MemberQueryDto memberQueryDto = new MemberQueryDto(memberEntity.getEmployeeName(), memberEntity.getDepartment());
+        MemberQueryDto memberQueryDto = new MemberQueryDto(memberEntity.getUsername(), memberEntity.getDepartment());
 
         return memberQueryDto;
     }

@@ -2,14 +2,15 @@ package com.nor3stbackend.www.member.command.application.service;
 
 import com.nor3stbackend.www.company.command.application.service.CompanyService;
 import com.nor3stbackend.www.config.JwtTokenProvider;
+import com.nor3stbackend.www.config.SecurityUtil;
 import com.nor3stbackend.www.login.Encryptor;
 import com.nor3stbackend.www.login.TokenInfo;
-import com.nor3stbackend.www.member.command.application.dto.EmployeeRegistrationDto;
+import com.nor3stbackend.www.member.command.application.dto.EmployeeUpdateDto;
 import com.nor3stbackend.www.member.command.application.dto.ManagerRegistrationDto;
 import com.nor3stbackend.www.member.command.domain.RoleEnum;
 import com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity;
 import com.nor3stbackend.www.member.command.infra.repository.MemberRepository;
-import com.nor3stbackend.www.solved.command.application.service.SolvedService;
+import com.nor3stbackend.www.member.query.infra.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,8 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,8 +28,8 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MemberMapper memberMapper;
     private final CompanyService companyService;
-    private final SolvedService solvedService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final Encryptor encryptor;
@@ -62,24 +62,74 @@ public class MemberService {
         }
     }
 
-    @Transactional
-    public Long registerEmployee(EmployeeRegistrationDto employeeRegistrationDto) {
+
+    public List<String> registerMultipleEmployee(Integer registerCount) {
+        List<String> result = new ArrayList<>();
+
+        Random random = new Random();
 
 
-        MemberEntity memberEntity = MemberEntity.builder()
-                .username(employeeRegistrationDto.getUsername())
-                .password(encryptor.encrypt(employeeRegistrationDto.getPassword()))
-                .companyEntity(companyService.getCompany(employeeRegistrationDto.getCompanyId()).get())
-                .employeeName(employeeRegistrationDto.getEmployeeName())
-                .companyPosition(employeeRegistrationDto.getCompanyPosition())
-                .department(employeeRegistrationDto.getDepartment())
-                .roles(Collections.singletonList(RoleEnum.EMPLOYEE.name()))
-                .build();
+        Long companyId = memberRepository.getReferenceById(SecurityUtil.getCurrentMemberId())
+                .getCompanyEntity().getCompanyId();
 
-        solvedService.createDailyTask(memberEntity);
+        Integer employeeCount= memberMapper.countByCompanyId(companyId);
 
-        return memberRepository.save(memberEntity).getMemberId();
+        if(employeeCount > 100) {
+            throw new RuntimeException("사원 수가 100명을 초과하였습니다.");
+        }
+
+        for(int i = 0; i < registerCount; i++) {
+            // 8자리 랜덤 숫자 생성
+            int max = 99999999;
+            int min = 10000000;
+            int randomNumber = random.nextInt(max - min + 1) + min;
+
+            String username = String.valueOf(randomNumber);
+            String password = String.valueOf(randomNumber);
+
+            MemberEntity memberEntity = MemberEntity.builder()
+                    .username(username)
+                    .password(encryptor.encrypt(password))
+                    .companyEntity(companyService.getCompany(companyId).get())
+                    .roles(Collections.singletonList(RoleEnum.EMPLOYEE.name()))
+                    .build();
+
+            memberRepository.save(memberEntity);
+
+            result.add(username);
+        }
+
+        return result;
     }
+
+    public void updateEmployee(EmployeeUpdateDto employeeUpdateDto) {
+        MemberEntity memberEntity = memberRepository.getReferenceById(SecurityUtil.getCurrentMemberId());
+
+        memberEntity.updateEmployee(employeeUpdateDto.getUsername(), encryptor.encrypt(employeeUpdateDto.getPassword()), employeeUpdateDto.getDepartment());
+
+        memberRepository.save(memberEntity);
+    }
+
+    // 일괄 생성으로 변경
+
+//    @Transactional
+//    public Long registerEmployee(EmployeeRegistrationDto employeeRegistrationDto) {
+//
+//
+//        MemberEntity memberEntity = MemberEntity.builder()
+//                .username(employeeRegistrationDto.getUsername())
+//                .password(encryptor.encrypt(employeeRegistrationDto.getPassword()))
+//                .companyEntity(companyService.getCompany(employeeRegistrationDto.getCompanyId()).get())
+//                .employeeName(employeeRegistrationDto.getEmployeeName())
+//                .companyPosition(employeeRegistrationDto.getCompanyPosition())
+//                .department(employeeRegistrationDto.getDepartment())
+//                .roles(Collections.singletonList(RoleEnum.EMPLOYEE.name()))
+//                .build();
+//
+//        solvedService.createDailyTask(memberEntity);
+//
+//        return memberRepository.save(memberEntity).getMemberId();
+//    }
 
     @Transactional
     public MemberEntity registerManager(ManagerRegistrationDto managerRegistrationDto) {
@@ -87,7 +137,6 @@ public class MemberService {
                 .username(managerRegistrationDto.getUsername())
                 .password(encryptor.encrypt(managerRegistrationDto.getPassword()))
                 .companyEntity(companyService.insertCompany(managerRegistrationDto.getCompanyName()))
-                .employeeName(managerRegistrationDto.getEmployeeName())
                 .department(managerRegistrationDto.getDepartment())
                 .roles(Collections.singletonList(RoleEnum.MANAGER.name()))
                 .build();

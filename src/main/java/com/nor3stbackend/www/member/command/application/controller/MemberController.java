@@ -1,9 +1,8 @@
 package com.nor3stbackend.www.member.command.application.controller;
 
 import com.nor3stbackend.www.common.ResponseMessage;
-import com.nor3stbackend.www.config.SecurityUtil;
 import com.nor3stbackend.www.login.TokenInfo;
-import com.nor3stbackend.www.member.command.application.dto.EmployeeRegistrationDto;
+import com.nor3stbackend.www.member.command.application.dto.EmployeeUpdateDto;
 import com.nor3stbackend.www.member.command.application.dto.ManagerRegistrationDto;
 import com.nor3stbackend.www.member.command.application.dto.MemberLoginRequestDto;
 import com.nor3stbackend.www.member.command.application.service.MemberService;
@@ -37,25 +36,56 @@ public class MemberController {
         return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
     }
 
-    @PostMapping("/employee")
-    public ResponseEntity<?> registerEmployee(@RequestBody EmployeeRegistrationDto employeeRegistrationDto) {
+    
+    // 일괄 생성으로 변경
+//    @PostMapping("/employee")
+//    public ResponseEntity<?> registerEmployee(@RequestBody EmployeeRegistrationDto employeeRegistrationDto) {
+//        ResponseMessage responseMessage;
+//
+//        try {
+//            responseMessage = setResponseMessage("사원이 정상적으로 생성되었습니다.", HttpStatus.OK, memberService.registerEmployee(employeeRegistrationDto));
+//        } catch (Exception e) {
+//            log.error(e.getMessage());
+//            responseMessage = setResponseMessage("사원 생성에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+//        }
+//
+//
+//        return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
+//
+//    }
+
+     @PostMapping("/employee")
+     public ResponseEntity<?> registerMultipleEmployee(@RequestBody int registerCount) {
         ResponseMessage responseMessage;
 
         try {
-            responseMessage = setResponseMessage("사원이 정상적으로 생성되었습니다.", HttpStatus.OK, memberService.registerEmployee(employeeRegistrationDto));
-        } catch (Exception e) {
-            log.error(e.getMessage());
+            responseMessage = setResponseMessage("사원이 정상적으로 생성되었습니다.", HttpStatus.OK, memberService.registerMultipleEmployee(registerCount));
+        } catch (RuntimeException e) {
             responseMessage = setResponseMessage("사원 생성에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
 
         return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
+     }
 
-    }
+     @PutMapping("/employee")
+     public ResponseEntity<?> updateEmployee(@RequestBody EmployeeUpdateDto employeeUpdateDto) {
+        ResponseMessage responseMessage;
+
+        try {
+            memberService.updateEmployee(employeeUpdateDto);
+            responseMessage = setResponseMessage("사원이 정상적으로 수정되었습니다.", HttpStatus.OK, null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            responseMessage = setResponseMessage("사원 수정에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
+     }
 
     @PostMapping("/manager")
     public ResponseEntity<?> registerManager(@RequestBody ManagerRegistrationDto managerRegistrationDto) {
-        ResponseMessage responseMessage = new ResponseMessage();
+        ResponseMessage responseMessage;
 
         try {
             responseMessage = setResponseMessage("매니저가 정상적으로 생성되었습니다.", HttpStatus.OK, memberService.registerManager(managerRegistrationDto));

@@ -1,4 +1,4 @@
-package com.nor3stbackend.www.solved.query.application.dto;
+package com.nor3stbackend.www.solved.query.application.vo;
 
 import lombok.Data;
 
@@ -10,5 +10,4 @@ public class DailyTaskVO {
     private String koreanContent;
     private String vietContent;
     private String audioUrl;
-    private byte[] audioContent;
 }
