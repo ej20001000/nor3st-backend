@@ -1,9 +1,11 @@
 package com.nor3stbackend.www.solved.query.infra.mapper;
 
-import com.nor3stbackend.www.solved.command.domain.aggregate.SolvedEntity;
+import com.nor3stbackend.www.solved.query.application.dto.DailyTaskVO;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 @Mapper
 public interface SolvedMapper {
-    SolvedEntity getMyDailyTask(Long memberId);
+    List<DailyTaskVO> getMyDailyTask(Long memberId);
 }
