@@ -5,5 +5,5 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface SolvedMapper {
-    SolvedEntity getMySolvedList(Long memberId);
+    SolvedEntity getMyDailyTask(Long memberId);
 }

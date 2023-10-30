@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "solved_history")
@@ -18,7 +19,7 @@ public class SolvedHistoryEntity {
     @JoinColumn(name = "solved_id")
     private SolvedEntity solvedEntity;
 
-    private LocalDate solvedDate;
+    private LocalDateTime solvedDate;
 
     private String audioUrl;
 
@@ -27,9 +28,10 @@ public class SolvedHistoryEntity {
     public SolvedHistoryEntity() {
     }
 
-    public SolvedHistoryEntity(SolvedEntity solvedEntity, String audioUrl) {
+    public SolvedHistoryEntity(SolvedEntity solvedEntity, String audioUrl, SolvedEnum isSolved) {
         this.solvedEntity = solvedEntity;
         this.audioUrl = audioUrl;
-        this.solvedDate = LocalDate.now();
+        this.solvedDate = LocalDateTime.now();
+        this.isSolved = isSolved;
     }
 }

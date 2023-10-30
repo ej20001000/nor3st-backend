@@ -3,9 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nor3stbackend.www.solved.query.infra.mapper.SolvedMapper">
-    <select id="getMySolvedList" resultType="SolvedEntity">
-        SELECT SOLVED_ID, AUDIO_URL
-        FROM SOLVED
-        WHERE MEMBER_ID = #{memberId}
+    <select id="getMyDailyTask" resultType="SolvedEntity">
+        SELECT s.SOLVED_ID, s.IS_SOLVED, s.SOLVED_SCORE,
+               p.KOREAN_CONTENT, p.VIET_CONTENT, p.AUDIO_URL
+        FROM SOLVED s
+        JOIN PROBLEM p ON p.PROBLEM_ID = s.PROBLEM_ID
+        WHERE MEMBER_ID = #{memberId} AND s.SOLVED_DATE = CURDATE()
     </select>
 </mapper>

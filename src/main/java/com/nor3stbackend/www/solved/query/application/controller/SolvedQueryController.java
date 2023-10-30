@@ -20,7 +20,7 @@ public class SolvedQueryController {
     @GetMapping("/solved")
     public ResponseEntity<?> getMySolvedList() {
 
-        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "success", solvedQueryService.getMySolvedList());
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "success", solvedQueryService.getMyDailyTask());
 
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }

@@ -28,7 +28,7 @@ logging:
 
 upload:
   solved:
-    path: C:\Dev\nor3st-backend\src\main\resources\static\upload\
+    path: C:\Dev\nor3st-backend\src\main\resources\static\upload\solved\
   problem:
     path: C:\Dev\nor3st-backend\src\main\resources\static\upload\problems\
 

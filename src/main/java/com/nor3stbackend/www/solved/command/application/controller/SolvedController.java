@@ -1,9 +1,11 @@
 package com.nor3stbackend.www.solved.command.application.controller;
 
 import com.nor3stbackend.www.common.ResponseMessage;
+import com.nor3stbackend.www.solved.command.application.dto.SubmitSolvedDto;
 import com.nor3stbackend.www.solved.command.application.service.SolvedService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,12 +21,11 @@ public class SolvedController {
         this.solvedService = solvedService;
     }
 
-    @PostMapping("/solved")
-    public ResponseEntity<?> insertSolved(@RequestBody MultipartFile file) {
+    @PostMapping("/solved/{solvedId}")
+    public ResponseEntity<?> insertSolved(@RequestBody MultipartFile file, @PathVariable Long solvedId) {
 
-        System.out.println("file: " + file);
 
-        ResponseMessage responseMessage = solvedService.insertSolved(file);
+        ResponseMessage responseMessage = solvedService.insertSolved(file, solvedId);
 
         return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
     }

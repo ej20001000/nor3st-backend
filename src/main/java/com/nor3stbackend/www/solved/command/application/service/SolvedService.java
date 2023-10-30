@@ -6,8 +6,10 @@ import com.nor3stbackend.www.member.command.application.service.MemberService;
 import com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity;
 import com.nor3stbackend.www.problem.command.domain.aggregate.ProblemEntity;
 import com.nor3stbackend.www.problem.query.application.service.ProblemQueryService;
+import com.nor3stbackend.www.solved.command.application.dto.SubmitSolvedDto;
 import com.nor3stbackend.www.solved.command.domain.aggregate.SolvedEntity;
 import com.nor3stbackend.www.solved.command.domain.aggregate.SolvedHistoryEntity;
+import com.nor3stbackend.www.solved.command.domain.enumType.SolvedEnum;
 import com.nor3stbackend.www.solved.command.infra.repository.SolvedHistoryRepository;
 import com.nor3stbackend.www.solved.command.infra.repository.SolvedRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -51,37 +53,40 @@ public class SolvedService {
     }
 
     @Transactional
-    public ResponseMessage insertSolved(MultipartFile file) {
+    public ResponseMessage insertSolved(MultipartFile file, Long solvedId) {
 
         ResponseMessage responseMessage;
 
         try {
+
             // 파일 저장 경로 설정
             String origName = file.getOriginalFilename();
             String extension = origName.substring(origName.lastIndexOf("."));
-            String fullPath = uploadPath + UUID.randomUUID() + extension;
+            String uniquePath = UUID.randomUUID() + extension;
+            String fullPath = uploadPath + uniquePath;
 
             //파일 저장
             File dest = new File(fullPath);
             file.transferTo(dest);
 
             // AI 서버로 요청
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Type", "multipart/form-data");
-
-            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-            body.add("voice", dest);
-
-            String response = requestToAI(headers, body);
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.add("Content-Type", "multipart/form-data");
+//
+//            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+//            body.add("voice", dest);
+//
+//            String response = requestToAI(headers, body);
 
             // DB 저장
-            MemberEntity memberEntity = new MemberEntity(SecurityUtil.getCurrentMemberId());
-            SolvedEntity solvedEntity = new SolvedEntity(memberEntity, fullPath);
-            SolvedHistoryEntity solvedHistoryEntity = new SolvedHistoryEntity(solvedRepository.save(solvedEntity), fullPath);
+            SolvedEntity solvedEntity = solvedRepository.getReferenceById(solvedId);
+
+            solvedEntity.updateSolved(uniquePath, SolvedEnum.SOLVED);
+            SolvedHistoryEntity solvedHistoryEntity = new SolvedHistoryEntity(solvedRepository.save(solvedEntity), uniquePath, solvedEntity.getIsSolved());
 
             solvedHistoryRepository.save(solvedHistoryEntity);
 
-            responseMessage = new ResponseMessage(HttpStatus.OK, "파일 업로드에 성공하였습니다.", response);
+            responseMessage = new ResponseMessage(HttpStatus.OK, "파일 업로드에 성공하였습니다.", solvedHistoryEntity);
         } catch (IOException e) {
             log.error(e.getMessage());
             responseMessage = new ResponseMessage(HttpStatus.OK, "파일 업로드에 실패하였습니다.", e.getMessage());
