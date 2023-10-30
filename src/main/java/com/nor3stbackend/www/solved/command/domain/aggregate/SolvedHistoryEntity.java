@@ -23,6 +23,7 @@ public class SolvedHistoryEntity {
 
     private String audioUrl;
 
+    @Enumerated(EnumType.STRING)
     private SolvedEnum isSolved;
 
     public SolvedHistoryEntity() {

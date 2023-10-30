@@ -30,6 +30,7 @@ public class SolvedEntity {
 
     private LocalDate solvedDate;
 
+    @Enumerated(EnumType.STRING)
     private SolvedEnum isSolved;
 
     public SolvedEntity() {
