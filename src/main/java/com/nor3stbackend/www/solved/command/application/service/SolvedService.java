@@ -8,6 +8,7 @@ import com.nor3stbackend.www.solved.command.application.dto.GetScoreDto;
 import com.nor3stbackend.www.solved.command.domain.aggregate.SolvedEntity;
 import com.nor3stbackend.www.solved.command.domain.aggregate.SolvedHistoryEntity;
 import com.nor3stbackend.www.solved.command.domain.enumType.SolvedEnum;
+import com.nor3stbackend.www.solved.command.domain.vo.InsertSolvedResponseVO;
 import com.nor3stbackend.www.solved.command.infra.repository.SolvedHistoryRepository;
 import com.nor3stbackend.www.solved.command.infra.repository.SolvedRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -99,7 +100,7 @@ public class SolvedService {
 
             solvedHistoryRepository.save(solvedHistoryEntity);
 
-            responseMessage = new ResponseMessage(HttpStatus.OK, "파일 업로드에 성공하였습니다.", solvedHistoryEntity);
+            responseMessage = new ResponseMessage(HttpStatus.OK, "파일 업로드에 성공하였습니다.", new InsertSolvedResponseVO(score, solvedEnum.name(), getScoreDto.getAnswer()));
         } catch (IOException e) {
             log.error(e.getMessage());
             responseMessage = new ResponseMessage(HttpStatus.OK, "파일 업로드에 실패하였습니다.", e.getMessage());
