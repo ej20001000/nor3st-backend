@@ -52,8 +52,9 @@ public class SolvedEntity {
         this.isSolved = SolvedEnum.UNSOLVED;
     }
 
-    public void updateSolved(String audioUrl, SolvedEnum isSolved) {
+    public void updateSolved(String audioUrl, SolvedEnum isSolved, int solvedScore) {
         this.audioUrl = audioUrl;
         this.isSolved = isSolved;
+        this.solvedScore = solvedScore;
     }
 }

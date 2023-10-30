@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class MemberQueryDto {
-    private String employeeName;
+    private String username;
     private String department;
 }

@@ -6,4 +6,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface MemberMapper {
     MemberEntity findByMemberId(Long memberId);
+    Integer countByCompanyId(Long companyId);
 }
