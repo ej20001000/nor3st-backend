@@ -1,6 +1,8 @@
 package com.nor3stbackend.www.solved.command.domain.aggregate;
 
 import com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity;
+import com.nor3stbackend.www.problem.command.domain.aggregate.ProblemEntity;
+import com.nor3stbackend.www.solved.command.domain.enumType.SolvedEnum;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -18,16 +20,30 @@ public class SolvedEntity {
     @JoinColumn(name = "member_id")
     private MemberEntity memberEntity;
 
+    @ManyToOne
+    @JoinColumn(name = "problem_id")
+    private ProblemEntity problemEntity;
+
     private String audioUrl;
 
     private LocalDate solvedDate;
 
+    private SolvedEnum isSolved;
+
     public SolvedEntity() {
+    }
+
+    // 회원 가입 문제 생성
+    public SolvedEntity(MemberEntity memberEntity, ProblemEntity problemEntity) {
+        this.memberEntity = memberEntity;
+        this.problemEntity = problemEntity;
+        this.isSolved = SolvedEnum.UNSOLVED;
     }
 
     public SolvedEntity(MemberEntity memberEntity, String audioUrl) {
         this.memberEntity = memberEntity;
         this.audioUrl = audioUrl;
         this.solvedDate = LocalDate.now();
+        this.isSolved = SolvedEnum.UNSOLVED;
     }
 }

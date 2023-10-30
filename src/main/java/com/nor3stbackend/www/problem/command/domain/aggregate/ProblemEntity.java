@@ -4,27 +4,26 @@ import lombok.Getter;
 
 import javax.persistence.*;
 
+
 @Entity
 @Getter
+@Table(name = "problem")
 public class ProblemEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long problemId;
 
-    @Column
-    private String problemString;
+    private String koreanContent;
 
-    @Column
-    private String problemAudioLocation;
+    private String vietContent;
+
+
 
     public ProblemEntity() {
     }
-
-    public ProblemEntity(Long problemId, String problemString, String problemAudioLocation) {
-        this.problemId = problemId;
-        this.problemString = problemString;
-        this.problemAudioLocation = problemAudioLocation;
+    public ProblemEntity(String koreanContent, String vietContent) {
+        this.koreanContent = koreanContent;
+        this.vietContent = vietContent;
     }
 }

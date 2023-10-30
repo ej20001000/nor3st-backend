@@ -1,6 +1,7 @@
 package com.nor3stbackend.www.member.query.application.service;
 
 import com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity;
+import com.nor3stbackend.www.member.query.application.dto.MemberQueryDto;
 import com.nor3stbackend.www.member.query.infra.mapper.MemberMapper;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +13,13 @@ public class MemberQueryService {
         this.memberMapper = memberMapper;
     }
 
-    public MemberEntity findByMemberId(Long memberId) {
+    public MemberQueryDto findByMemberId(Long memberId) {
         System.out.println("memberId: " + memberId);
 
         MemberEntity memberEntity = memberMapper.findByMemberId(memberId);
 
-        return memberEntity;
+        MemberQueryDto memberQueryDto = new MemberQueryDto(memberEntity.getEmployeeName(), memberEntity.getDepartment());
+
+        return memberQueryDto;
     }
 }

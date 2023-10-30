@@ -4,6 +4,8 @@ import com.nor3stbackend.www.common.ResponseMessage;
 import com.nor3stbackend.www.config.SecurityUtil;
 import com.nor3stbackend.www.member.command.application.service.MemberService;
 import com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity;
+import com.nor3stbackend.www.problem.command.domain.aggregate.ProblemEntity;
+import com.nor3stbackend.www.problem.query.application.service.ProblemQueryService;
 import com.nor3stbackend.www.solved.command.domain.aggregate.SolvedEntity;
 import com.nor3stbackend.www.solved.command.domain.aggregate.SolvedHistoryEntity;
 import com.nor3stbackend.www.solved.command.infra.repository.SolvedHistoryRepository;
@@ -23,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -30,7 +33,7 @@ import java.util.UUID;
 @Slf4j
 public class SolvedService {
 
-    @Value("${upload.path}")
+    @Value("${upload.solved.path}")
     private String uploadPath;
 
     @Value("${ai.url}")
@@ -38,13 +41,13 @@ public class SolvedService {
 
     private final SolvedRepository solvedRepository;
     private final SolvedHistoryRepository solvedHistoryRepository;
-    private final MemberService memberService;
+    private final ProblemQueryService problemQueryService;
 
 
-    public SolvedService(SolvedRepository solvedRepository, SolvedHistoryRepository solvedHistoryRepository, MemberService memberService) {
+    public SolvedService(SolvedRepository solvedRepository, SolvedHistoryRepository solvedHistoryRepository, ProblemQueryService problemQueryService) {
         this.solvedRepository = solvedRepository;
         this.solvedHistoryRepository = solvedHistoryRepository;
-        this.memberService = memberService;
+        this.problemQueryService = problemQueryService;
     }
 
     @Transactional
@@ -72,7 +75,7 @@ public class SolvedService {
             String response = requestToAI(headers, body);
 
             // DB 저장
-            MemberEntity memberEntity = memberService.getMember(SecurityUtil.getCurrentMemberId());
+            MemberEntity memberEntity = new MemberEntity(SecurityUtil.getCurrentMemberId());
             SolvedEntity solvedEntity = new SolvedEntity(memberEntity, fullPath);
             SolvedHistoryEntity solvedHistoryEntity = new SolvedHistoryEntity(solvedRepository.save(solvedEntity), fullPath);
 
@@ -95,5 +98,17 @@ public class SolvedService {
         HttpEntity<String> response = restTemplate.getForEntity(aiUrl + "/get_answer", String.class, request);
 
         return response.getBody();
+    }
+
+    // 회원 가입 시 돌아갈 문제 생성
+    @Transactional
+    public void createDailyTask(MemberEntity memberEntity) {
+
+        List<ProblemEntity> dailyTask = problemQueryService.getDailyProblem();
+
+        for(ProblemEntity problemEntity : dailyTask) {
+            SolvedEntity solvedEntity = new SolvedEntity(memberEntity, problemEntity);
+            solvedRepository.save(solvedEntity);
+        }
     }
 }

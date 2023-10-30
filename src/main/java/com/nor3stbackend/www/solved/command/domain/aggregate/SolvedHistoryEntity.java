@@ -1,5 +1,6 @@
 package com.nor3stbackend.www.solved.command.domain.aggregate;
 
+import com.nor3stbackend.www.solved.command.domain.enumType.SolvedEnum;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -20,6 +21,8 @@ public class SolvedHistoryEntity {
     private LocalDate solvedDate;
 
     private String audioUrl;
+
+    private SolvedEnum isSolved;
 
     public SolvedHistoryEntity() {
     }

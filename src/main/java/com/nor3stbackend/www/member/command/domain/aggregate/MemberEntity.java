@@ -1,10 +1,7 @@
 package com.nor3stbackend.www.member.command.domain.aggregate;
 
 import com.nor3stbackend.www.company.command.domain.aggregate.CompanyEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,11 +44,20 @@ public class MemberEntity implements UserDetails {
     @Builder.Default
     private List<String> roles = new ArrayList<>();
 
+    public MemberEntity(Long memberId) {
+        this.memberId = memberId;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
+    }
+
+    public MemberEntity(String employeeName, String department) {
+        this.employeeName = employeeName;
+        this.department = department;
     }
 
     @Override

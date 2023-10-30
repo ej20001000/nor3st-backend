@@ -22,6 +22,8 @@ public class SolvedController {
     @PostMapping("/solved")
     public ResponseEntity<?> insertSolved(@RequestBody MultipartFile file) {
 
+        System.out.println("file: " + file);
+
         ResponseMessage responseMessage = solvedService.insertSolved(file);
 
         return new ResponseEntity<>(responseMessage, responseMessage.getStatus());

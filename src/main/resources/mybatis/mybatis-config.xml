@@ -7,5 +7,7 @@
     </settings>
     <typeAliases>
         <typeAlias type="com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity" alias="MemberEntity"/>
+        <typeAlias type="com.nor3stbackend.www.solved.command.domain.aggregate.SolvedEntity" alias="SolvedEntity"/>
+        <typeAlias type="com.nor3stbackend.www.problem.command.domain.aggregate.ProblemEntity" alias="ProblemEntity"/>
     </typeAliases>
 </configuration>
