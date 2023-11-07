@@ -1,6 +1,7 @@
 package com.nor3stbackend.www.member.command.application.controller;
 
 import com.nor3stbackend.www.common.ResponseMessage;
+import com.nor3stbackend.www.config.SecurityUtil;
 import com.nor3stbackend.www.login.TokenInfo;
 import com.nor3stbackend.www.member.command.application.dto.EmployeeUpdateDto;
 import com.nor3stbackend.www.member.command.application.dto.ManagerRegistrationDto;
@@ -99,7 +100,7 @@ public class MemberController {
 
     @GetMapping("/checkUsername")
     public ResponseEntity<?> checkUsername(@RequestParam String username) {
-        ResponseMessage responseMessage = new ResponseMessage();
+        ResponseMessage responseMessage;
 
         if(memberService.checkUsername(username)) {
             responseMessage = setResponseMessage("사용 가능한 아이디입니다.", HttpStatus.OK, true);

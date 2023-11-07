@@ -152,4 +152,5 @@ public class MemberService {
     public MemberEntity getMember(Long memberId) {
         return memberRepository.findById(memberId).get();
     }
+
 }
