@@ -35,4 +35,10 @@ public class SolvedHistoryEntity {
         this.solvedDate = LocalDateTime.now();
         this.isSolved = isSolved;
     }
+
+    public SolvedHistoryEntity(SolvedEntity solvedEntity, SolvedEnum isSolved) {
+        this.solvedEntity = solvedEntity;
+        this.solvedDate = LocalDateTime.now();
+        this.isSolved = isSolved;
+    }
 }

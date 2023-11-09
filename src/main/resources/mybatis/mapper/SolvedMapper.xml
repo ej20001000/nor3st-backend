@@ -5,10 +5,17 @@
 <mapper namespace="com.nor3stbackend.www.solved.query.infra.mapper.SolvedMapper">
     <select id="getMyDailyTask" resultType="DailyTaskVO">
         SELECT s.SOLVED_ID, s.IS_SOLVED, s.SOLVED_SCORE,
-               p.KOREAN_CONTENT, p.VIET_CONTENT, p.AUDIO_URL
+               p.KOREAN_CONTENT, p.VIET_CONTENT, p.AUDIO_URL, p.PROBLEM_ID
         FROM SOLVED s
         JOIN PROBLEM p ON p.PROBLEM_ID = s.PROBLEM_ID
         WHERE MEMBER_ID = #{memberId} AND s.SOLVED_DATE = CURDATE()
+    </select>
+    <select id="getMyDailyTaskListeningWrongVietList" resultType="String">
+        SELECT VIET_CONTENT
+        FROM PROBLEM
+        WHERE PROBLEM_ID != #{problemId}
+        ORDER BY RAND()
+        LIMIT 4
     </select>
     <select id="getCompanyDailySolvedRate" resultType="double">
         SELECT COUNT(*) / (SELECT COUNT(*) FROM SOLVED WHERE COMPANY_ID = #{companyId} AND SOLVED_DATE = CURDATE()) * 100

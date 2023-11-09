@@ -10,4 +10,5 @@ public class DailyTaskVO {
     private String koreanContent;
     private String vietContent;
     private String audioUrl;
+    private Long problemId;
 }

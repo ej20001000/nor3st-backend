@@ -14,4 +14,6 @@ public interface SolvedMapper {
     double getCompanyDailySolvedAvgScore(Long companyId);
 
     int getCompanyDailySolvedEmployeeCount(Long companyId);
+
+    List<String> getMyDailyTaskListeningWrongVietList(Long problemId);
 }
