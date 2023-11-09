@@ -34,4 +34,11 @@ public class MemberQueryController {
 
         return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
     }
+
+    @GetMapping("/admin/dashboard")
+    public ResponseEntity<?> getAdminDashboardInfo() {
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "관리자 대시보드 정보 조회에 성공하였습니다.", memberQueryService.getAdminDashboardInfo());
+
+        return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
+    }
 }

@@ -10,4 +10,19 @@
         JOIN PROBLEM p ON p.PROBLEM_ID = s.PROBLEM_ID
         WHERE MEMBER_ID = #{memberId} AND s.SOLVED_DATE = CURDATE()
     </select>
+    <select id="getCompanyDailySolvedRate" resultType="double">
+        SELECT COUNT(*) / (SELECT COUNT(*) FROM SOLVED WHERE COMPANY_ID = #{companyId} AND SOLVED_DATE = CURDATE()) * 100
+        FROM SOLVED
+        WHERE COMPANY_ID = #{companyId} AND SOLVED_DATE = CURDATE() AND IS_SOLVED != "UNSOLVED"
+    </select>
+    <select id="getCompanyDailySolvedAvgScore" resultType="double">
+        SELECT AVG(SOLVED_SCORE)
+        FROM SOLVED
+        WHERE COMPANY_ID = #{companyId} AND SOLVED_DATE = CURDATE() AND IS_SOLVED != "UNSOLVED"
+    </select>
+    <select id="getCompanyDailySolvedEmployeeCount" resultType="int">
+        SELECT COUNT(DISTINCT MEMBER_ID)
+        FROM SOLVED
+        WHERE COMPANY_ID = #{companyId} AND SOLVED_DATE = CURDATE() AND IS_SOLVED != "UNSOLVED"
+    </select>
 </mapper>

@@ -14,4 +14,8 @@ public interface MemberMapper {
     List<MemberListVO> getMemberList(int offset, Long companyId);
 
     Long getCompanyId(Long currentMemberId);
+
+    String getCompanyPlan(Long companyId);
+
+    int getCompanyMemberCount(Long companyId);
 }

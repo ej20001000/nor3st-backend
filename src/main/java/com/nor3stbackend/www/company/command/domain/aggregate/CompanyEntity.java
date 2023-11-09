@@ -1,5 +1,6 @@
 package com.nor3stbackend.www.company.command.domain.aggregate;
 
+import com.nor3stbackend.www.company.command.domain.enumType.PlanEnum;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -15,11 +16,15 @@ public class CompanyEntity {
 
     private String companyName;
 
+    @Enumerated(EnumType.STRING)
+    private PlanEnum plan;
+
     public CompanyEntity() {
     }
 
-    public CompanyEntity (String companyName) {
+    public CompanyEntity (String companyName, PlanEnum plan) {
         this.companyName = companyName;
+        this.plan = plan;
     }
 
 }
