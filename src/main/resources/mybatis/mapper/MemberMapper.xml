@@ -13,4 +13,16 @@
         FROM MEMBER
         WHERE COMPANY_ID = #{companyId}
     </select>
+    <select id="getMemberList" resultType="com.nor3stbackend.www.member.query.domain.vo.MemberListVO">
+        SELECT MEMBER_ID, USERNAME, DEPARTMENT
+        FROM MEMBER
+        WHERE COMPANY_ID = #{companyId}
+        ORDER BY MEMBER_ID
+        LIMIT 10 OFFSET #{offset}
+    </select>
+    <select id="getCompanyId" resultType="Long">
+        SELECT COMPANY_ID
+        FROM MEMBER
+        WHERE MEMBER_ID = #{currentMemberId}
+    </select>
 </mapper>
