@@ -32,6 +32,21 @@ public class SolvedQueryService {
         return dailyTaskVOList;
     }
 
+    // 사원 참여도(풀이 시도율)
+    public double getCompanyDailySolvedRate(Long companyId) {
+        return solvedMapper.getCompanyDailySolvedRate(companyId);
+    }
+
+    // 사원 데일리 평균 점수(풀이 시도중)
+    public double getCompanyDailySolvedAvgScore(Long companyId) {
+        return solvedMapper.getCompanyDailySolvedAvgScore(companyId);
+    }
+
+    // 데일리 풀이 시도 사원 수
+    public int getCompanyDailySolvedEmployeeCount(Long companyId) {
+        return solvedMapper.getCompanyDailySolvedEmployeeCount(companyId);
+    }
+
     public FileSystemResource getMyDailyTaskAudio(String audioUrl) {
         File file = new File(uploadPath + audioUrl);
         return new FileSystemResource(file);
