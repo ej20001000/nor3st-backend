@@ -2,6 +2,7 @@ package com.nor3stbackend.www.solved.command.domain.aggregate;
 
 import com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity;
 import com.nor3stbackend.www.problem.command.domain.aggregate.ProblemEntity;
+import com.nor3stbackend.www.solved.command.domain.enumType.ProblemType;
 import com.nor3stbackend.www.solved.command.domain.enumType.SolvedEnum;
 import lombok.Getter;
 
@@ -33,6 +34,9 @@ public class SolvedEntity {
     @Enumerated(EnumType.STRING)
     private SolvedEnum isSolved;
 
+    @Enumerated(EnumType.STRING)
+    private ProblemType problemType;
+
     public SolvedEntity() {
     }
 
@@ -43,6 +47,7 @@ public class SolvedEntity {
         this.solvedDate = LocalDate.now();
         this.solvedScore = 0;
         this.isSolved = SolvedEnum.UNSOLVED;
+        this.problemType = ProblemType.SPEAKING;
     }
 
     public SolvedEntity(MemberEntity memberEntity, String audioUrl) {
@@ -52,8 +57,13 @@ public class SolvedEntity {
         this.isSolved = SolvedEnum.UNSOLVED;
     }
 
-    public void updateSolved(String audioUrl, SolvedEnum isSolved, int solvedScore) {
+    public void speakingSolved(String audioUrl, SolvedEnum isSolved, int solvedScore) {
         this.audioUrl = audioUrl;
+        this.isSolved = isSolved;
+        this.solvedScore = solvedScore;
+    }
+
+    public void listeningSolved(SolvedEnum isSolved, int solvedScore) {
         this.isSolved = isSolved;
         this.solvedScore = solvedScore;
     }

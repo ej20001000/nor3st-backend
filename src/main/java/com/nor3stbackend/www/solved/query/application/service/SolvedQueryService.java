@@ -1,6 +1,7 @@
 package com.nor3stbackend.www.solved.query.application.service;
 
 import com.nor3stbackend.www.config.SecurityUtil;
+import com.nor3stbackend.www.solved.query.application.vo.DailyTaskListeningVO;
 import com.nor3stbackend.www.solved.query.application.vo.DailyTaskVO;
 import com.nor3stbackend.www.solved.query.infra.mapper.SolvedMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +10,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 @Service
@@ -26,10 +25,23 @@ public class SolvedQueryService {
         this.solvedMapper = solvedMapper;
     }
 
-    public List<DailyTaskVO> getMyDailyTask() {
+    public List<DailyTaskVO> getMyDailyTaskSpeaking() {
         List<DailyTaskVO> dailyTaskVOList = solvedMapper.getMyDailyTask(SecurityUtil.getCurrentMemberId());
 
         return dailyTaskVOList;
+    }
+
+    public List<DailyTaskListeningVO> getMyDailyTaskListening() {
+
+        List<DailyTaskVO> dailyTaskVOList = solvedMapper.getMyDailyTask(SecurityUtil.getCurrentMemberId());
+        List<DailyTaskListeningVO> dailyTaskListeningVOList = null;
+
+        for(DailyTaskVO dailyTaskVO : dailyTaskVOList) {
+            List<String> wrongVietList = solvedMapper.getMyDailyTaskListeningWrongVietList(dailyTaskVO.getProblemId());
+            dailyTaskListeningVOList.add(new DailyTaskListeningVO(dailyTaskVO, wrongVietList));
+        }
+
+        return dailyTaskListeningVOList;
     }
 
     // 사원 참여도(풀이 시도율)

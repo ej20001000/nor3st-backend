@@ -13,7 +13,6 @@ import com.nor3stbackend.www.solved.command.infra.repository.SolvedHistoryReposi
 import com.nor3stbackend.www.solved.command.infra.repository.SolvedRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 
@@ -52,7 +50,7 @@ public class SolvedService {
     }
 
     @Transactional
-    public ResponseMessage insertSolved(MultipartFile file, Long solvedId) {
+    public ResponseMessage insertSpeakingSolved(MultipartFile file, Long solvedId) {
 
         ResponseMessage responseMessage;
 
@@ -95,7 +93,7 @@ public class SolvedService {
                 solvedEnum = SolvedEnum.WRONG;
             }
 
-            solvedEntity.updateSolved(uniquePath, solvedEnum, score);
+            solvedEntity.speakingSolved(uniquePath, solvedEnum, score);
             SolvedHistoryEntity solvedHistoryEntity = new SolvedHistoryEntity(solvedRepository.save(solvedEntity), uniquePath, solvedEnum);
 
             solvedHistoryRepository.save(solvedHistoryEntity);
@@ -119,6 +117,28 @@ public class SolvedService {
         return response.getBody();
     }
 
+    @Transactional
+    public void insertListeningSolved(boolean isAnswer, Long solvedId) {
+        SolvedEnum solvedEnum;
+        int solvedScore;
+        if(isAnswer){
+            solvedEnum = SolvedEnum.SOLVED;
+            solvedScore = 100;
+        }
+        else{
+            solvedEnum = SolvedEnum.WRONG;
+            solvedScore = 0;
+        }
+
+        SolvedEntity solvedEntity = solvedRepository.getReferenceById(solvedId);
+
+        solvedEntity.listeningSolved(solvedEnum, solvedScore);
+
+        SolvedHistoryEntity solvedHistoryEntity = new SolvedHistoryEntity(solvedRepository.save(solvedEntity), solvedEnum);
+
+        solvedHistoryRepository.save(solvedHistoryEntity);
+    }
+
     // 회원 가입 시 돌아갈 문제 생성
     @Transactional
     public void createDailyTask(MemberEntity memberEntity) {
@@ -130,4 +150,5 @@ public class SolvedService {
             solvedRepository.save(solvedEntity);
         }
     }
+
 }
