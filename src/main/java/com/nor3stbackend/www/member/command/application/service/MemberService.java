@@ -153,4 +153,12 @@ public class MemberService {
         return memberRepository.findById(memberId).get();
     }
 
+    public MemberEntity getMemberByUsername(String username) {
+        Optional<MemberEntity> memberEntity = memberRepository.findByUsername(username);
+
+        if(memberEntity.isEmpty()) {
+            throw new RuntimeException("유저가 존재하지 않습니다!");
+        }
+        return memberEntity.get();
+    }
 }

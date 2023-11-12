@@ -10,6 +10,8 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -34,11 +36,14 @@ public class SolvedQueryService {
     public List<DailyTaskListeningVO> getMyDailyTaskListening() {
 
         List<DailyTaskVO> dailyTaskVOList = solvedMapper.getMyDailyTask(SecurityUtil.getCurrentMemberId());
-        List<DailyTaskListeningVO> dailyTaskListeningVOList = null;
+        List<DailyTaskListeningVO> dailyTaskListeningVOList = new ArrayList<>();
 
         for(DailyTaskVO dailyTaskVO : dailyTaskVOList) {
-            List<String> wrongVietList = solvedMapper.getMyDailyTaskListeningWrongVietList(dailyTaskVO.getProblemId());
-            dailyTaskListeningVOList.add(new DailyTaskListeningVO(dailyTaskVO, wrongVietList));
+            List<String> questionList = solvedMapper.getMyDailyTaskListeningWrongVietList(dailyTaskVO.getProblemId());
+            questionList.add(dailyTaskVO.getVietContent());
+            Collections.shuffle(questionList);
+            DailyTaskListeningVO dailyTaskListeningVO = new DailyTaskListeningVO(dailyTaskVO, questionList);
+            dailyTaskListeningVOList.add(dailyTaskListeningVO);
         }
 
         return dailyTaskListeningVOList;

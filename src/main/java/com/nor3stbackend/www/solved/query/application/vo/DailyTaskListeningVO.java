@@ -9,6 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 public class DailyTaskListeningVO {
     private DailyTaskVO dailyTaskVO;
-    private List<String> wrongVietList;
+    private List<String> questionList;
 
 }

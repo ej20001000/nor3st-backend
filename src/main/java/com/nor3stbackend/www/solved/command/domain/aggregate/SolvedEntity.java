@@ -41,13 +41,13 @@ public class SolvedEntity {
     }
 
     // 회원 가입 문제 생성
-    public SolvedEntity(MemberEntity memberEntity, ProblemEntity problemEntity) {
+    public SolvedEntity(MemberEntity memberEntity, ProblemEntity problemEntity, ProblemType problemType) {
         this.memberEntity = memberEntity;
         this.problemEntity = problemEntity;
         this.solvedDate = LocalDate.now();
         this.solvedScore = 0;
         this.isSolved = SolvedEnum.UNSOLVED;
-        this.problemType = ProblemType.SPEAKING;
+        this.problemType = problemType;
     }
 
     public SolvedEntity(MemberEntity memberEntity, String audioUrl) {
@@ -57,6 +57,7 @@ public class SolvedEntity {
         this.isSolved = SolvedEnum.UNSOLVED;
     }
 
+    // 리스닝 문제 생성 생성자
     public void speakingSolved(String audioUrl, SolvedEnum isSolved, int solvedScore) {
         this.audioUrl = audioUrl;
         this.isSolved = isSolved;

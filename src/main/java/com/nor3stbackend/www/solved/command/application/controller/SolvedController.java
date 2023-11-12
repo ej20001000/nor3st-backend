@@ -5,10 +5,7 @@ import com.nor3stbackend.www.solved.command.application.service.SolvedService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -37,6 +34,19 @@ public class SolvedController {
 
         ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "success", null);
 
+        return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
+    }
+
+    @PostMapping("solved/dailyTask")
+    public ResponseEntity<?> insertDailyTask(@RequestParam String username) {
+        ResponseMessage responseMessage;
+        try {
+            solvedService.createDailyTask(username);
+            responseMessage = new ResponseMessage(HttpStatus.ACCEPTED, "Daily Task Insert 성공", null);
+        } catch(RuntimeException e) {
+            log.error(e.getMessage());
+            responseMessage = new ResponseMessage(HttpStatus.CONFLICT, e.getMessage(), null);
+        }
         return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
     }
 }
