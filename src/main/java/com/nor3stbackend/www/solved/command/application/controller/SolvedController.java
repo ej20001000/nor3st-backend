@@ -28,7 +28,7 @@ public class SolvedController {
     }
 
     @PostMapping("/solved/listening/{solvedId}")
-    public ResponseEntity<?> insertListeningSolved(@RequestBody boolean isAnswer, @PathVariable Long solvedId) {
+    public ResponseEntity<?> insertListeningSolved(@RequestParam boolean isAnswer, @PathVariable Long solvedId) {
 
         solvedService.insertListeningSolved(isAnswer, solvedId);
 

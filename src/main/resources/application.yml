@@ -13,9 +13,9 @@ logging:
 
 upload:
   solved:
-    path: O:\dev\nor3st-backend\src\main\resources\static\upload\solved\
+    path: C:\Dev\nor3st-backend\src\main\resources\static\upload\solved\
   problem:
-    path: O:\dev\nor3st-backend\src\main\resources\static\upload\problems\
+    path: C:\Dev\nor3st-backend\src\main\resources\static\upload\problems\
 
 ai:
   url: http://221.163.19.218:5541

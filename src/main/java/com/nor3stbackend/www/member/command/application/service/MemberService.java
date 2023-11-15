@@ -56,6 +56,8 @@ public class MemberService {
             // 3. 인증 정보를 기반으로 JWT 토큰 생성
             TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 
+            tokenInfo.setMemberRole(memberEntity.get().getRoles().get(0));
+
             return tokenInfo;
         }  else {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
@@ -63,6 +65,7 @@ public class MemberService {
     }
 
 
+    @Transactional
     public List<String> registerMultipleEmployee(Integer registerCount) {
         List<String> result = new ArrayList<>();
 
@@ -102,6 +105,7 @@ public class MemberService {
         return result;
     }
 
+    @Transactional
     public void updateEmployee(EmployeeUpdateDto employeeUpdateDto) {
         MemberEntity memberEntity = memberRepository.getReferenceById(SecurityUtil.getCurrentMemberId());
 

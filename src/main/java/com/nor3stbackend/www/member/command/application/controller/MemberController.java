@@ -56,7 +56,7 @@ public class MemberController {
 //    }
 
      @PostMapping("/employee")
-     public ResponseEntity<?> registerMultipleEmployee(@RequestBody int registerCount) {
+     public ResponseEntity<?> registerMultipleEmployee(@RequestParam int registerCount) {
         ResponseMessage responseMessage;
 
         try {

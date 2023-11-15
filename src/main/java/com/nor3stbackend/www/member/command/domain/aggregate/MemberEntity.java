@@ -58,11 +58,6 @@ public class MemberEntity implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return memberId.toString();
-    }
-
-    @Override
     public String getPassword() {
         return password;
     }
