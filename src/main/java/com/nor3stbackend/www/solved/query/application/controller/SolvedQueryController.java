@@ -47,4 +47,11 @@ public class SolvedQueryController {
                 .headers(headers)
                 .body(response);
     }
+
+    @GetMapping("/solvedPercentage")
+    public ResponseEntity<?> getSolvedPercentage() {
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "success", solvedQueryService.getCompanyTaskPercentage());
+
+        return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
+    }
 }
