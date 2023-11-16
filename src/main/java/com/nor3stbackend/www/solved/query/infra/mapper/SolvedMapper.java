@@ -1,7 +1,9 @@
 package com.nor3stbackend.www.solved.query.infra.mapper;
 
 import com.nor3stbackend.www.solved.query.application.vo.DailyTaskVO;
+import com.nor3stbackend.www.solved.query.application.vo.TaskProgressPercentageVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
@@ -16,4 +18,10 @@ public interface SolvedMapper {
     int getCompanyDailySolvedEmployeeCount(Long companyId);
 
     List<String> getMyDailyTaskListeningWrongVietList(Long problemId);
+
+    TaskProgressPercentageVO getCompanyTaskPercentageDaily(Long companyId);
+
+    TaskProgressPercentageVO getCompanyTaskPercentageWeekly(Long companyId);
+
+    TaskProgressPercentageVO getCompanyTaskPercentageMonthly(Long companyId);
 }
