@@ -7,6 +7,6 @@
         SELECT PROBLEM_ID
         FROM PROBLEM
         ORDER BY RAND()
-        LIMIT 5
+        LIMIT 20
     </select>
 </mapper>
