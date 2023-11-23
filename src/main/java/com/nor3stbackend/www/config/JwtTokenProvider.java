@@ -55,6 +55,8 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
+
+
         return TokenInfo.builder()
                 .grantType("Bearer")
                 .accessToken(accessToken)

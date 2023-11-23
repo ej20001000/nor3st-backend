@@ -1,16 +1,20 @@
 package com.nor3stbackend.www.solved.command.application.service;
 
 import com.nor3stbackend.www.common.ResponseMessage;
+import com.nor3stbackend.www.config.SecurityUtil;
+import com.nor3stbackend.www.member.command.application.service.MemberService;
 import com.nor3stbackend.www.member.command.domain.aggregate.MemberEntity;
 import com.nor3stbackend.www.problem.command.domain.aggregate.ProblemEntity;
 import com.nor3stbackend.www.problem.query.application.service.ProblemQueryService;
 import com.nor3stbackend.www.solved.command.application.dto.GetScoreDto;
 import com.nor3stbackend.www.solved.command.domain.aggregate.SolvedEntity;
 import com.nor3stbackend.www.solved.command.domain.aggregate.SolvedHistoryEntity;
+import com.nor3stbackend.www.solved.command.domain.enumType.ProblemType;
 import com.nor3stbackend.www.solved.command.domain.enumType.SolvedEnum;
 import com.nor3stbackend.www.solved.command.domain.vo.InsertSolvedResponseVO;
 import com.nor3stbackend.www.solved.command.infra.repository.SolvedHistoryRepository;
 import com.nor3stbackend.www.solved.command.infra.repository.SolvedRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -30,6 +34,7 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SolvedService {
 
     @Value("${upload.solved.path}")
@@ -41,13 +46,8 @@ public class SolvedService {
     private final SolvedRepository solvedRepository;
     private final SolvedHistoryRepository solvedHistoryRepository;
     private final ProblemQueryService problemQueryService;
+    private final MemberService memberService;
 
-
-    public SolvedService(SolvedRepository solvedRepository, SolvedHistoryRepository solvedHistoryRepository, ProblemQueryService problemQueryService) {
-        this.solvedRepository = solvedRepository;
-        this.solvedHistoryRepository = solvedHistoryRepository;
-        this.problemQueryService = problemQueryService;
-    }
 
     @Transactional
     public ResponseMessage insertSpeakingSolved(MultipartFile file, Long solvedId) {
@@ -141,14 +141,31 @@ public class SolvedService {
 
     // 회원 가입 시 돌아갈 문제 생성
     @Transactional
-    public void createDailyTask(MemberEntity memberEntity) {
+    public void createDailySpeakingTask(String username) {
 
         List<ProblemEntity> dailyTask = problemQueryService.getDailyProblem();
+        MemberEntity memberEntity = memberService.getMemberByUsername(username);
 
         for(ProblemEntity problemEntity : dailyTask) {
-            SolvedEntity solvedEntity = new SolvedEntity(memberEntity, problemEntity);
+            SolvedEntity solvedEntity = new SolvedEntity(memberEntity, problemEntity, ProblemType.SPEAKING);
             solvedRepository.save(solvedEntity);
         }
+    }
+
+    @Transactional
+    public void createDailyListenTask(String username) {
+        List<ProblemEntity> dailyListenTask = problemQueryService.getDailyProblem();
+        MemberEntity memberEntity = memberService.getMemberByUsername(username);
+
+        for(ProblemEntity problemEntity : dailyListenTask) {
+            SolvedEntity solvedEntity = new SolvedEntity(memberEntity, problemEntity, ProblemType.LISTENING);
+            solvedRepository.save(solvedEntity);
+        }
+    }
+
+    public void createDailyTask(String username) {
+        createDailySpeakingTask(username);
+        createDailyListenTask(username);
     }
 
 }

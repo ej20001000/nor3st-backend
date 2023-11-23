@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nor3stbackend.www.member.query.infra.mapper.MemberMapper">
     <select id="findByMemberId" resultType="MemberEntity">
-        SELECT EMPLOYEE_NAME, DEPARTMENT
+        SELECT USERNAME, DEPARTMENT
         FROM MEMBER
         WHERE MEMBER_ID = #{memberId}
     </select>

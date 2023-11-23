@@ -6,10 +6,7 @@ import com.nor3stbackend.www.problem.command.application.service.ProblemService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -31,6 +28,18 @@ public class ProblemController {
         } catch (IllegalArgumentException e) {
             responseMessage = new ResponseMessage(HttpStatus.BAD_REQUEST, e.getMessage(), null);
             log.error(e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
+    }
+
+    @PostMapping("/problem/withai")
+    public ResponseEntity<?> createProblemWithAI(@RequestParam String korean) {
+        ResponseMessage responseMessage;
+        try {
+            responseMessage = new ResponseMessage(HttpStatus.ACCEPTED, "problem created successfully with AI!", problemService.createProblemWithAI(korean));
+        } catch (RuntimeException e) {
+            responseMessage = new ResponseMessage(HttpStatus.CONFLICT, "not created properly", null);
         }
 
         return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
