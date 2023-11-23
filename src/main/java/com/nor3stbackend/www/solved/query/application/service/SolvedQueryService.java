@@ -1,9 +1,7 @@
 package com.nor3stbackend.www.solved.query.application.service;
 
-import com.nor3stbackend.www.company.command.application.service.CompanyService;
-import com.nor3stbackend.www.company.command.domain.aggregate.CompanyEntity;
 import com.nor3stbackend.www.config.SecurityUtil;
-import com.nor3stbackend.www.member.query.application.service.MemberQueryService;
+import com.nor3stbackend.www.member.query.infra.mapper.MemberMapper;
 import com.nor3stbackend.www.solved.query.application.vo.DailyTaskListeningVO;
 import com.nor3stbackend.www.solved.query.application.vo.DailyTaskVO;
 import com.nor3stbackend.www.solved.query.application.vo.TaskProgressPercentageVO;
@@ -27,15 +25,13 @@ import java.util.List;
 public class SolvedQueryService {
 
     private final SolvedMapper solvedMapper;
-    private final CompanyService companyService;
+    private final MemberMapper memberMapper;
 
     @Value("${upload.problem.path}")
     private String uploadPath;
 
     public List<DailyTaskVO> getMyDailyTaskSpeaking() {
-        List<DailyTaskVO> dailyTaskVOList = solvedMapper.getMyDailyTask(SecurityUtil.getCurrentMemberId());
-
-        return dailyTaskVOList;
+        return solvedMapper.getMyDailyTask(SecurityUtil.getCurrentMemberId());
     }
 
     public List<DailyTaskListeningVO> getMyDailyTaskListening() {
@@ -76,12 +72,13 @@ public class SolvedQueryService {
 
     public MultiValueMap<String, TaskProgressPercentageVO> getCompanyTaskPercentage() {
 
-        CompanyEntity companyEntity = companyService.getCompanyByMemberId(SecurityUtil.getCurrentMemberId());
+        Long companyId = memberMapper.getCompanyId(SecurityUtil.getCurrentMemberId());
+
 
         MultiValueMap<String, TaskProgressPercentageVO> data = new LinkedMultiValueMap<>();
-        data.add("daily", solvedMapper.getCompanyTaskPercentageDaily(companyEntity.getCompanyId()));
-        data.add("weekly", solvedMapper.getCompanyTaskPercentageWeekly(companyEntity.getCompanyId()));
-        data.add("monthly", solvedMapper.getCompanyTaskPercentageMonthly(companyEntity.getCompanyId()));
+        data.add("daily", solvedMapper.getCompanyTaskPercentageDaily(companyId));
+        data.add("weekly", solvedMapper.getCompanyTaskPercentageWeekly(companyId));
+        data.add("monthly", solvedMapper.getCompanyTaskPercentageMonthly(companyId));
 
         return data;
     }

@@ -19,19 +19,16 @@ public class MemberQueryService {
     private final SolvedQueryService solvedQueryService;
 
     public MemberQueryDto findByMemberId(Long memberId) {
-        System.out.println("memberId: " + memberId);
 
         MemberEntity memberEntity = memberMapper.findByMemberId(memberId);
 
-        MemberQueryDto memberQueryDto = new MemberQueryDto(memberEntity.getUsername(), memberEntity.getDepartment());
-
-        return memberQueryDto;
+        return new MemberQueryDto(memberEntity.getUsername(), memberEntity.getDepartment());
     }
 
     public List<MemberListVO> getEmployeeList(int page) {
-        List<MemberListVO> memberListVO = memberMapper.getMemberList((page - 1) * 10, memberMapper.getCompanyId(SecurityUtil.getCurrentMemberId()));
+        return memberMapper.getMemberList((page - 1) * 10, memberMapper.getCompanyId(SecurityUtil.getCurrentMemberId()));
 
-        return memberListVO;
+
     }
 
     // 테스트 필요
@@ -43,8 +40,10 @@ public class MemberQueryService {
         double companyDailySolvedAvgScore = solvedQueryService.getCompanyDailySolvedAvgScore(companyId);
         int companyDailySolvedEmployeeCount = solvedQueryService.getCompanyDailySolvedEmployeeCount(companyId);
 
-        AdminDashboardVO adminDashboardVO = new AdminDashboardVO(companyPlan, companyMemberCount, 50, companyDailySolvedRate, companyDailySolvedAvgScore, companyDailySolvedEmployeeCount);
+        return new AdminDashboardVO(companyPlan, companyMemberCount, 50, companyDailySolvedRate, companyDailySolvedAvgScore, companyDailySolvedEmployeeCount);
+    }
 
-        return adminDashboardVO;
+    public long getCompanyId(Long memberId) {
+        return memberMapper.getCompanyId(memberId);
     }
 }

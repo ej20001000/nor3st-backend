@@ -16,6 +16,11 @@ import com.nor3stbackend.www.solved.command.infra.repository.SolvedHistoryReposi
 import com.nor3stbackend.www.solved.command.infra.repository.SolvedRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
@@ -47,7 +52,8 @@ public class SolvedService {
     private final SolvedHistoryRepository solvedHistoryRepository;
     private final ProblemQueryService problemQueryService;
     private final MemberService memberService;
-
+    private final JobLauncher jobLauncher;
+    private final Job solvedAssignmentJob;
 
     @Transactional
     public ResponseMessage insertSpeakingSolved(MultipartFile file, Long solvedId) {
@@ -85,7 +91,6 @@ public class SolvedService {
             SolvedEnum solvedEnum;
 
             int score = getScoreDto.getScore();
-            System.out.println(getScoreDto.getAnswer());
 
             if (score >= 80) {
                 solvedEnum = SolvedEnum.SOLVED;
@@ -139,33 +144,18 @@ public class SolvedService {
         solvedHistoryRepository.save(solvedHistoryEntity);
     }
 
-    // 회원 가입 시 돌아갈 문제 생성
-    @Transactional
-    public void createDailySpeakingTask(String username) {
 
-        List<ProblemEntity> dailyTask = problemQueryService.getDailyProblem();
-        MemberEntity memberEntity = memberService.getMemberByUsername(username);
+    public String insertBatchDailyTask() {
+        try {
+            JobParameters jobParameters = new JobParametersBuilder()
+                    .addLong("time", System.currentTimeMillis())
+                    .toJobParameters();
+            JobExecution jobExecution = jobLauncher.run(solvedAssignmentJob, jobParameters);
 
-        for(ProblemEntity problemEntity : dailyTask) {
-            SolvedEntity solvedEntity = new SolvedEntity(memberEntity, problemEntity, ProblemType.SPEAKING);
-            solvedRepository.save(solvedEntity);
+            return jobExecution.getStatus().toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e.getMessage();
         }
     }
-
-    @Transactional
-    public void createDailyListenTask(String username) {
-        List<ProblemEntity> dailyListenTask = problemQueryService.getDailyProblem();
-        MemberEntity memberEntity = memberService.getMemberByUsername(username);
-
-        for(ProblemEntity problemEntity : dailyListenTask) {
-            SolvedEntity solvedEntity = new SolvedEntity(memberEntity, problemEntity, ProblemType.LISTENING);
-            solvedRepository.save(solvedEntity);
-        }
-    }
-
-    public void createDailyTask(String username) {
-        createDailySpeakingTask(username);
-        createDailyListenTask(username);
-    }
-
 }

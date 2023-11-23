@@ -24,7 +24,4 @@ public class CompanyService {
         return companyRepository.findById(companyId);
     }
 
-    public CompanyEntity getCompanyByMemberId(Long memberId) {
-        return companyRepository.findByMemberId(memberId);
-    }
 }

@@ -19,7 +19,7 @@ public class SolvedController {
     }
 
     @PostMapping("/solved/speaking/{solvedId}")
-    public ResponseEntity<?> insertSpeakingSolved(@RequestBody MultipartFile file, @PathVariable Long solvedId) {
+    public ResponseEntity<ResponseMessage> insertSpeakingSolved(@RequestBody MultipartFile file, @PathVariable Long solvedId) {
 
 
         ResponseMessage responseMessage = solvedService.insertSpeakingSolved(file, solvedId);
@@ -28,7 +28,7 @@ public class SolvedController {
     }
 
     @PostMapping("/solved/listening/{solvedId}")
-    public ResponseEntity<?> insertListeningSolved(@RequestParam boolean isAnswer, @PathVariable Long solvedId) {
+    public ResponseEntity<ResponseMessage> insertListeningSolved(@RequestParam boolean isAnswer, @PathVariable Long solvedId) {
 
         solvedService.insertListeningSolved(isAnswer, solvedId);
 
@@ -37,11 +37,11 @@ public class SolvedController {
         return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
     }
 
-    @PostMapping("solved/dailyTask")
-    public ResponseEntity<?> insertDailyTask(@RequestParam String username) {
+    @PostMapping("solved/batchDailyTask")
+    public ResponseEntity<ResponseMessage> insertBatchDailyTask() {
         ResponseMessage responseMessage;
         try {
-            solvedService.createDailyTask(username);
+            solvedService.insertBatchDailyTask();
             responseMessage = new ResponseMessage(HttpStatus.ACCEPTED, "Daily Task Insert 성공", null);
         } catch(RuntimeException e) {
             log.error(e.getMessage());

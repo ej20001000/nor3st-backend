@@ -20,7 +20,7 @@ public class SolvedQueryController {
     }
 
     @GetMapping("/solved/speaking")
-    public ResponseEntity<?> getMySolvedListSpeaking() {
+    public ResponseEntity<ResponseMessage> getMySolvedListSpeaking() {
 
         ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "success", solvedQueryService.getMyDailyTaskSpeaking());
 
@@ -28,7 +28,7 @@ public class SolvedQueryController {
     }
 
     @GetMapping("/solved/listening")
-    public ResponseEntity<?> getMySolvedListListening() {
+    public ResponseEntity<ResponseMessage> getMySolvedListListening() {
 
         ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "success", solvedQueryService.getMyDailyTaskListening());
 
@@ -49,7 +49,7 @@ public class SolvedQueryController {
     }
 
     @GetMapping("/solvedPercentage")
-    public ResponseEntity<?> getSolvedPercentage() {
+    public ResponseEntity<ResponseMessage> getSolvedPercentage() {
         ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "success", solvedQueryService.getCompanyTaskPercentage());
 
         return new ResponseEntity<>(responseMessage, responseMessage.getStatus());
