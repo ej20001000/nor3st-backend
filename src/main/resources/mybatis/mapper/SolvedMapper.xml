@@ -32,4 +32,37 @@
         FROM SOLVED
         WHERE COMPANY_ID = #{companyId} AND SOLVED_DATE = CURDATE() AND IS_SOLVED != "UNSOLVED"
     </select>
+    <select id="getCompanyTaskPercentageDaily" resultType="com.nor3stbackend.www.solved.query.application.vo.TaskProgressPercentageVO">
+        select count(case when s.is_solved = 'SOLVED' and s.problem_type = 'LISTENING' then s.is_solved end) / count(case when s.problem_type = 'LISTENING' then s.is_solved end) * 100 AS listening,
+               count(case when s.is_solved = 'SOLVED' and s.problem_type = 'SPEAKING' then s.is_solved end) / count(case when s.problem_type = 'SPEAKING' then s.is_solved end) * 100 as speaking,
+               count(case when s.is_solved = 'SOLVED' then s.is_solved end) / count(*) as total
+        from solved s left join member m
+                                on s.member_id = m.member_id
+        where s.solved_date = curdate()
+          and m.company_id = #{companyId};
+    </select>
+    <select id="getCompanyTaskPercentageWeekly" resultType="com.nor3stbackend.www.solved.query.application.vo.TaskProgressPercentageVO">
+        <![CDATA[
+        select count(case when s.is_solved = 'SOLVED' and s.problem_type = 'LISTENING' then s.is_solved end) / count(case when s.problem_type = 'LISTENING' then s.is_solved end) * 100 AS listening,
+            count(case when s.is_solved = 'SOLVED' and s.problem_type = 'SPEAKING' then s.is_solved end) / count(case when s.problem_type = 'SPEAKING' then s.is_solved end) * 100 as speaking,
+            count(case when s.is_solved = 'SOLVED' then s.is_solved end) / count(*) as total
+        from solved s left join member m
+        on s.member_id = m.member_id
+        where s.solved_date >= curdate() - interval 7 day
+        and s.solved_date <= curdate()
+        and m.company_id = #{companyId};
+        ]]>
+    </select>
+    <select id="getCompanyTaskPercentageMonthly" resultType="com.nor3stbackend.www.solved.query.application.vo.TaskProgressPercentageVO">
+        <![CDATA[
+        select count(case when s.is_solved = 'SOLVED' and s.problem_type = 'LISTENING' then s.is_solved end) / count(case when s.problem_type = 'LISTENING' then s.is_solved end) * 100 AS listening,
+               count(case when s.is_solved = 'SOLVED' and s.problem_type = 'SPEAKING' then s.is_solved end) / count(case when s.problem_type = 'SPEAKING' then s.is_solved end) * 100 as speaking,
+               count(case when s.is_solved = 'SOLVED' then s.is_solved end) / count(*) as total
+        from solved s left join member m
+        on s.member_id = m.member_id
+        where year(s.solved_date) = year(curdate())
+          and month(s.solved_date) = month(curdate())
+          and m.company_id = #{companyId};
+        ]]>
+    </select>
 </mapper>

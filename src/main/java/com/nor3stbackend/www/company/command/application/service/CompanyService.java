@@ -23,4 +23,5 @@ public class CompanyService {
     public Optional<CompanyEntity> getCompany(Long companyId) {
         return companyRepository.findById(companyId);
     }
+
 }

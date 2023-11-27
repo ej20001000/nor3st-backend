@@ -1,6 +1,11 @@
 jwt:
   secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
 
+#spring:
+#  batch:
+#    jdbc:
+#      initialize-schema: always
+
 logging:
   level:
     org:
@@ -24,5 +29,11 @@ mybatis:
   config-location: classpath:mybatis/mybatis-config.xml
   mapper-locations: classpath:mybatis/mapper/*.xml
 
+
 # Include external database configuration
 spring.config.import: db-config.yml
+
+spring:
+  batch:
+    job:
+      enabled: false

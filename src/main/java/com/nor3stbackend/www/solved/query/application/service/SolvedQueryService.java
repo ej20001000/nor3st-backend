@@ -1,13 +1,18 @@
 package com.nor3stbackend.www.solved.query.application.service;
 
 import com.nor3stbackend.www.config.SecurityUtil;
+import com.nor3stbackend.www.member.query.infra.mapper.MemberMapper;
 import com.nor3stbackend.www.solved.query.application.vo.DailyTaskListeningVO;
 import com.nor3stbackend.www.solved.query.application.vo.DailyTaskVO;
+import com.nor3stbackend.www.solved.query.application.vo.TaskProgressPercentageVO;
 import com.nor3stbackend.www.solved.query.infra.mapper.SolvedMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,21 +21,17 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SolvedQueryService {
 
     private final SolvedMapper solvedMapper;
+    private final MemberMapper memberMapper;
 
     @Value("${upload.problem.path}")
     private String uploadPath;
 
-    public SolvedQueryService (SolvedMapper solvedMapper) {
-        this.solvedMapper = solvedMapper;
-    }
-
     public List<DailyTaskVO> getMyDailyTaskSpeaking() {
-        List<DailyTaskVO> dailyTaskVOList = solvedMapper.getMyDailyTask(SecurityUtil.getCurrentMemberId());
-
-        return dailyTaskVOList;
+        return solvedMapper.getMyDailyTask(SecurityUtil.getCurrentMemberId());
     }
 
     public List<DailyTaskListeningVO> getMyDailyTaskListening() {
@@ -68,4 +69,30 @@ public class SolvedQueryService {
         File file = new File(uploadPath + audioUrl);
         return new FileSystemResource(file);
     }
+
+    public MultiValueMap<String, TaskProgressPercentageVO> getCompanyTaskPercentage() {
+
+        Long companyId = memberMapper.getCompanyId(SecurityUtil.getCurrentMemberId());
+
+
+        MultiValueMap<String, TaskProgressPercentageVO> data = new LinkedMultiValueMap<>();
+        data.add("daily", solvedMapper.getCompanyTaskPercentageDaily(companyId));
+        data.add("weekly", solvedMapper.getCompanyTaskPercentageWeekly(companyId));
+        data.add("monthly", solvedMapper.getCompanyTaskPercentageMonthly(companyId));
+
+        return data;
+    }
+
+    public TaskProgressPercentageVO getCompanyTaskPercentageDaily(Long companyId) {
+        return solvedMapper.getCompanyTaskPercentageDaily(companyId);
+    }
+
+    public TaskProgressPercentageVO getCompanyTaskPercentageWeekly(Long companyId) {
+        return solvedMapper.getCompanyTaskPercentageWeekly(companyId);
+    }
+
+    public TaskProgressPercentageVO getCompanyTaskPercentageMonthly(Long companyId) {
+        return solvedMapper.getCompanyTaskPercentageMonthly(companyId);
+    }
+
 }
