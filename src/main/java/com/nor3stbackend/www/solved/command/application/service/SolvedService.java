@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 
@@ -77,14 +78,16 @@ public class SolvedService {
             FileSystemResource resource = new FileSystemResource(dest);
 
             // AI 서버로 요청
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Type", "multipart/form-data");
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.add("Content-Type", "multipart/form-data");
+//
+//            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+//            body.add("voice", resource);
+//            body.add("script", solvedEntity.getProblemEntity().getKoreanContent());
+            // AI Detached;
+            GetScoreDto getScoreDto = getRandomScore();
 
-            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-            body.add("voice", resource);
-            body.add("script", solvedEntity.getProblemEntity().getKoreanContent());
-
-            GetScoreDto getScoreDto = requestToAI(headers, body);
+//            GetScoreDto getScoreDto = requestToAI(headers, body);
 
             // DB 저장
 
@@ -103,13 +106,21 @@ public class SolvedService {
 
             solvedHistoryRepository.save(solvedHistoryEntity);
 
-            responseMessage = new ResponseMessage(HttpStatus.OK, "파일 업로드에 성공하였습니다.", new InsertSolvedResponseVO(score, solvedEnum.name(), getScoreDto.getAnswer()));
+            responseMessage = new ResponseMessage(HttpStatus.OK, "파일 업로드에 성공하였습니다.",
+                    new InsertSolvedResponseVO(score, solvedEnum.name(), getScoreDto.getAnswer()));
         } catch (IOException e) {
             log.error(e.getMessage());
             responseMessage = new ResponseMessage(HttpStatus.OK, "파일 업로드에 실패하였습니다.", e.getMessage());
         }
 
         return responseMessage;
+    }
+
+    public GetScoreDto getRandomScore() {
+        Random random = new Random();
+        GetScoreDto getScoreDto = new GetScoreDto("파악 후 삽입", random.nextInt(100 - 60) + 60);
+
+        return getScoreDto;
     }
 
     public GetScoreDto requestToAI(HttpHeaders headers, MultiValueMap<String, Object> body) {

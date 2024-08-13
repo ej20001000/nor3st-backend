@@ -7,6 +7,7 @@ import com.nor3stbackend.www.member.command.application.dto.EmployeeUpdateDto;
 import com.nor3stbackend.www.member.command.application.dto.ManagerRegistrationDto;
 import com.nor3stbackend.www.member.command.application.dto.MemberLoginRequestDto;
 import com.nor3stbackend.www.member.command.application.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/login")
+    @Operation(summary = "로그인", description = "로그인 정보를 확인하여 jwt 토큰을 리턴합니다.")
     public ResponseEntity<?> login(@RequestBody MemberLoginRequestDto memberLoginRequestDto) {
         ResponseMessage responseMessage;
         try{
@@ -56,6 +58,7 @@ public class MemberController {
 //    }
 
      @PostMapping("/employee")
+     @Operation(summary = "사원 일괄 생성", description = "중간 관리자가 파라미터 int 값만큼 사원을 일괄 생성합니다.")
      public ResponseEntity<?> registerMultipleEmployee(@RequestParam int registerCount) {
         ResponseMessage responseMessage;
 
@@ -70,6 +73,7 @@ public class MemberController {
      }
 
      @PutMapping("/employee")
+     @Operation(summary = "사원 정보 수정", description = "사원 정보를 수정합니다.")
      public ResponseEntity<?> updateEmployee(@RequestBody EmployeeUpdateDto employeeUpdateDto) {
         ResponseMessage responseMessage;
 
@@ -85,6 +89,7 @@ public class MemberController {
      }
 
     @PostMapping("/manager")
+    @Operation(summary = "중간 관리자 생성")
     public ResponseEntity<?> registerManager(@RequestBody ManagerRegistrationDto managerRegistrationDto) {
         ResponseMessage responseMessage;
 
@@ -99,6 +104,7 @@ public class MemberController {
     }
 
     @GetMapping("/checkUsername")
+    @Operation(summary = "아이디 중복 체크")
     public ResponseEntity<?> checkUsername(@RequestParam String username) {
         ResponseMessage responseMessage;
 

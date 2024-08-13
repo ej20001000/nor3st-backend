@@ -81,7 +81,8 @@ public class ProblemService {
         body.add("korean", korean);
 
         HttpEntity<?> request = new HttpEntity<>(body, headers);
-        ResponseEntity<ProblemCreateWithAIDto> response = restTemplate.postForEntity(aiUrl + "/get_sentence2voice_viet", request, ProblemCreateWithAIDto.class);
+        ResponseEntity<ProblemCreateWithAIDto> response =
+                restTemplate.postForEntity(aiUrl + "/get_sentence2voice_viet", request, ProblemCreateWithAIDto.class);
 
         ProblemCreateWithAIDto problemCreateWithAIDto = response.getBody();
 

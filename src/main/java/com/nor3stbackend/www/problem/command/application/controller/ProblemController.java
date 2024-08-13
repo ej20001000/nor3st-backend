@@ -3,6 +3,7 @@ package com.nor3stbackend.www.problem.command.application.controller;
 import com.nor3stbackend.www.common.ResponseMessage;
 import com.nor3stbackend.www.problem.command.application.dto.ProblemCreateDto;
 import com.nor3stbackend.www.problem.command.application.service.ProblemService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class ProblemController {
     }
 
     @PostMapping("/problem")
+    @Operation(summary = "문제 수동 생성")
     public ResponseEntity<?> createProblem(@ModelAttribute ProblemCreateDto problemCreateDto) {
         ResponseMessage responseMessage;
 
@@ -34,6 +36,7 @@ public class ProblemController {
     }
 
     @PostMapping("/problem/withai")
+    @Operation(summary = "AI 활용해 문제 생성")
     public ResponseEntity<?> createProblemWithAI(@RequestParam String korean) {
         ResponseMessage responseMessage;
         try {

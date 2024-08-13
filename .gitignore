@@ -36,6 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
-**/static/upload/**
+#**/static/upload/**
 
 db-config.yml
