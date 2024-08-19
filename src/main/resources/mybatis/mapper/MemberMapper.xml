@@ -25,4 +25,9 @@
         FROM MEMBER
         WHERE MEMBER_ID = #{currentMemberId}
     </select>
+    <select id="getCompanyPlan" resultType="String">
+        SELECT PLAN
+        FROM COMPANY
+        WHERE COMPANY_ID = #{companyId}
+    </select>
 </mapper>

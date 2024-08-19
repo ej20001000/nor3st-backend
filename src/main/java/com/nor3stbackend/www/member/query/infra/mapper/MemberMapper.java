@@ -17,5 +17,4 @@ public interface MemberMapper {
 
     String getCompanyPlan(Long companyId);
 
-    int getCompanyMemberCount(Long companyId);
 }

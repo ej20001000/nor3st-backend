@@ -35,7 +35,7 @@ public class MemberQueryService {
     public AdminDashboardVO getAdminDashboardInfo() {
         Long companyId = memberMapper.getCompanyId(SecurityUtil.getCurrentMemberId());
         String companyPlan = memberMapper.getCompanyPlan(companyId);
-        int companyMemberCount = memberMapper.getCompanyMemberCount(companyId);
+        int companyMemberCount = memberMapper.countByCompanyId(companyId);
         double companyDailySolvedRate = solvedQueryService.getCompanyDailySolvedRate(companyId);
         double companyDailySolvedAvgScore = solvedQueryService.getCompanyDailySolvedAvgScore(companyId);
         int companyDailySolvedEmployeeCount = solvedQueryService.getCompanyDailySolvedEmployeeCount(companyId);

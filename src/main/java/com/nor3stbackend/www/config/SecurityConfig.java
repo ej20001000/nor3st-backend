@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/members/**", "/solved/**", "/problem/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .antMatchers("/members/**", "/solved/**", "/problem/**", "/swagger-ui/**", "/v3/api-docs/**", "/api", "**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()

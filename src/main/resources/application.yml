@@ -33,6 +33,12 @@ mybatis:
 # Include external database configuration
 spring.config.import: db-config.yml
 
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    path: /api
+
+
 spring:
   batch:
     job:
